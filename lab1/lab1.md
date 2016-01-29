@@ -7,7 +7,57 @@ Due Feb. 1, 2016 in class or by classes V2 upload if you have a digital copy. Th
         A destination host on the Internet so that the route from a Zoo machine to the destination has the largest number of hops that you can find. Please list the hops. What is your strategy to find such a host?
         A destination host on the Internet so that the route from a Zoo machine to the destination traverses the largest number of ISPs. You can get full credit if it has at least 5 different ISPs, but we encourage you to try to find a longer one. What is your strategy to find such a host?
 
+Find a domain that are geometrically far away from Yale.
+
+utl-lnx1.puk.ac.za 24 hops South Africa, National Research Foundation
+
+6 ISP
+Yale University
+State of Connecticut
+Ip Allocation for Geant Network
+Ubuntunet Alliance for Research and Education Networking.
+Uninet
+Potchefstroom University for Christian Higher Education
+
+1  anger.net.yale.edu (128.36.232.1)  3.636 ms  3.642 ms  3.641 ms
+Yale University
+2  10.1.2.81 (10.1.2.81)  0.390 ms  0.421 ms  0.464 ms
+3  10.1.2.113 (10.1.2.113)  0.402 ms  0.449 ms  0.597 ms
+4  Level3-10G-ASR.net.yale.internal (10.1.4.40)  1.759 ms  4.145 ms  4.143 ms
+5  cen-10g-yale.net.yale.internal (10.1.3.102)  2.205 ms  1.790 ms  2.553 ms
+6  * * *
+7  enrt064hhh-9k-te0-3-0-5.net.cen.ct.gov (67.218.83.254)  2.950 ms  2.867 ms  2.985 ms
+State of Connecticut
+8  198.71.46.215 (198.71.46.215)  2.419 ms  2.500 ms  2.425 ms
+Michigan, Ann Arbor, Internet
+9  et-5-0-0.1180.rtr.newy32aoa.net.internet2.edu (198.71.46.214)  5.207 ms  5.164 ms  5.149 ms
+10  198.71.45.237 (198.71.45.237)  76.614 ms  76.550 ms  76.467 ms
+11  ae2.mx1.gen.ch.geant.net (62.40.98.153)  83.117 ms  83.106 ms  83.066 ms
+Switzerland, geneve, ip allocation for geant Network
+12  ae1.mx1.fra.de.geant.net (62.40.98.109)  91.528 ms  91.521 ms  91.479 ms
+13  ubuntunet-gw.mx1.fra.de.geant.net (62.40.125.22)  98.086 ms  98.113 ms  97.904 ms
+Netherlands, Amsterdam, Ip Allocation for geant network Infrastructure
+14  196.32.210.177 (196.32.210.177)  111.021 ms  112.082 ms  112.039 ms
+South Africa, Western Cape, Ubuntunet Alliance for research and education networking.
+15  te-1-4-2018-mtz1-pe1.ubuntunet.net (196.32.209.117)  282.660 ms  282.674 ms  282.629 ms
+16  xe0-0-2-700-dur1-pe2-n.tenet.ac.za (155.232.6.86)  285.863 ms  286.988 ms  287.012 ms
+Western Cape, Uninet
+17  te0-12-0-2-pta1-p1-n.tenet.ac.za (155.232.6.29)  330.471 ms  323.929 ms  322.393 ms
+18  te0-1-0-1-jnb2-p1-n.tenet.ac.za (155.232.6.25)  336.656 ms  323.132 ms  332.443 ms
+19  t8-2-jnb2-pe1-n.tenet.ac.za (155.232.7.158)  297.720 ms  297.971 ms  298.078 ms
+20  155.232.14.149 (155.232.14.149)  300.850 ms  300.373 ms  300.975 ms
+Limpopo, Giyani, Uninet
+21  143.160.3.49 (143.160.3.49)  301.309 ms  301.366 ms  301.320 ms
+Potchefstroom, Potchefstroom University for Christian Higher Education
+22  143.160.3.74 (143.160.3.74)  301.666 ms  301.813 ms  301.767 ms
+23  143.160.7.242 (143.160.7.242)  301.532 ms  309.918 ms  301.574 ms
+24  utl-lnx1.puk.ac.za (143.160.32.1)  367.425 ms  369.060 ms  368.584 ms
+
+
+
     [P2] Determine the number of external phone lines that Yale will need in order to achieve a call blocking percentage of 1%. Assume that each person at Yale makes one external phone call per day, and each such phone call lasts on average 3 minutes, with the memoryless distribution. The number of people at Yale can be found at: http://www.yale.edu/about/facts.html
+
+
 
     [P3] Suppose that you are designing a Web server for your startup. You have acquired a single machine with a quad-core processor. Assume that CPU is the bottleneck. You anticipate that Web requests arrive (memoryless) at a rate of 15 requests/second, and benchmarking shows that it takes a core on average 200 ms to serve a Web request. What is the average service time that each Web request experiences? If it is a dual-core processor, what happens? You need to draw the state diagram when working on this problem.
 
