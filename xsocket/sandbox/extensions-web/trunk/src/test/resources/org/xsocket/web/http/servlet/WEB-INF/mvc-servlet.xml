@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- $Id: applicationContext.template.xml 34842 2006-03-22 16:28:14Z jhe $ -->
+<beans>
+
+    <!-- Auswahl des Controllers.
+         Default, aber explizit ist besser als implizit -->
+    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+        	<list>
+        	   <ref bean="springInterceptor"/>
+        	</list>
+        </property>
+    
+        <property name="mappings">
+            <props>
+                <prop key="/*">mvcController</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

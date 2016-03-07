@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Untitled Page</title>
+
+<meta name="GENERATOR" content="Created by BlueVoda"></head><body background="tutorial-Dateien/back01.jpg" bgcolor="#ffffff" text="#000000">
+<div style="position: absolute; left: 6px; top: 12px; width: 492px; height: 1666px; z-index: 0;" align="left">
+<font style="font-size: 15px;" color="#000000" face="Arial"><b><i>1. a simple handler example</i></b></font><font style="font-size: 16px;" color="#000000" face="Arial"><b><br>
+</b></font><font style="font-size: 15px;" color="#000000" face="Arial">First, define the handler class which implements the desired handler interface (IDataHandler, IConnectHandler, or both)<br>
+<br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New">&nbsp; class EchoHandler implements IDataHandler {<br>
+<br>
+&nbsp;&nbsp; public boolean onData(INonBlockingConnection connection) throws<br>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; IOException {<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; connection.write(connection.readAvailable());<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return true;<br>
+&nbsp;&nbsp; }<br>
+&nbsp; }</font><font style="font-size: 15px;" color="#000000" face="Arial"><br>
+<br>
+Than, create the server intance in the main class, and assign the above handler<br>
+<br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New">&nbsp; IMultithreadedServer srv = new MultithreadedServer(port, "TestSrv");<br>
+&nbsp; srv.setHandler(new EchoHandler());<br>
+<br>
+&nbsp; Thread server = new Thread(srv);<br>
+&nbsp; server.start();<br>
+<br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial">... that's it<br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New"><br>
+<br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial"><b><i>2. configure the server </i></b></font><font style="font-size: 11px;" color="#000000" face="Courier New"><br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial">My be you want to configure the server. You can do this by calling the appropriated setter <br>
+<br>
+&nbsp;&nbsp;&nbsp; </font><font style="font-size: 11px;" color="#000000" face="Courier New">// define the number of dispatchers. A dispatcher performs the read <br>
+&nbsp; // and write operations within the dispatcher thread.<br>
+&nbsp; // a new incoming connction will be assigned to one dispatcher by<br>
+&nbsp; // using a round robin algorithm</font><font style="font-size: 15px;" color="#000000" face="Arial"><br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New">&nbsp; srv.<b>setDispatcherSize</b>(6); <br>
+<br>
+&nbsp; // define the number of worker threads of each dispatcher instance<br>
+&nbsp; // to perform the onData and/or the onConnectionOpening method of<br>
+&nbsp; // the handler (Read and write operations will be queued internally<br>
+&nbsp; // and performed within the dispatcher thread)<br>
+&nbsp; srv.<b>setDispatcherWorkerSize</b>(4);<br>
+<br>
+&nbsp; // define the pre allocation (direct) memory size for the incoming<br>
+&nbsp; // data.<br>
+&nbsp; srv.<b>setReceiveBufferPreallocationSize</b>(1048576);<br>
+<br>
+&nbsp; // define the timeout, in which data has to be received<br>
+&nbsp; srv.<b>setIdleTimeout</b>(2 * 60 * 1000);<br>
+<br>
+&nbsp; // define the timeout for the connection <br>
+&nbsp; srv.<b>setConnectionTimeout</b>(30 * 60 * 1000);<br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial"><br>
+<br>
+<b><i>3. define a connection-scoped handler </i></b></font><font style="font-size: 16px;" color="#000000" face="Arial"><b><br>
+</b></font><font style="font-size: 15px;" color="#000000" face="Arial">By
+default handlers are instance-scoped. A handler becomes
+connection-scoped by implementing the IConnectionScoped interface. This
+interface requires a clone method, which will be used to create an
+dedicated instance of the given handler for each new connection<br>
+<br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New">&nbsp; class SmtpHandler implements IDataHandler, <b>IConnectionScoped</b> {<br>
+<br>
+&nbsp;&nbsp;&nbsp; public boolean onData(INonBlockingConnection connection) throws<br>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; IOException {<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; ...<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; public Object <b>clone()</b> throws CloneNotSupportedException {<br>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return super.clone();<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial"><br>
+<b><i>4. monitoring the server</i></b><br>
+The server supports a jmx interface. To export the interface, a connector server has to be attached to the platform MBeanserver:<br>
+<br>
+</font><font style="font-size: 11px;" color="#000000" face="Courier New"> // start the server<br>
+ Thread server = new Thread(srv);<br>
+ server.start();<br>
+<br>
+ // start the rmi registry server&nbsp; <br>
+ Registry registry = LocateRegistry.createRegistry(port);<br>
+<br>
+ // bind the mBean server to the rmi connector<br>
+ JMXServiceURL ul = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" <br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; + InetAddress.getLocalHost().getHostName() <br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; + ":" + port + "/" + "TestSrv");<br>
+ MBeanServer m = ManagementFactory.getPlatformMBeanServer();<br>
+ JMXConnectorServerFactory.newJMXConnectorServer(ul, null, m).start();<br>
+<br>
+ // print out the jmx url (e.g. for jconsole)<br>
+ System.out.println("jmx url " + ul);<br>
+<br>
+</font><font style="font-size: 15px;" color="#000000" face="Arial">Now you can monitor your server by using jconsole: <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+The name attribute which has been used to create a new server defines the jmx name space:</font>
+</div>
+<img src="tutorial-Dateien/jmxurl.JPG" alt="" style="position: absolute; left: 6px; top: 1386px; width: 415px; height: 183px; z-index: 1;" align="top" border="0" height="183" width="415">
+<img src="tutorial-Dateien/jconsole.JPG" alt="" style="position: absolute; left: 6px; top: 1638px; width: 478px; height: 315px; z-index: 2;" align="top" border="0" height="315" width="478">
+</body></html>

@@ -1,0 +1,33 @@
+xSocket - change log
+====================
+
+
+Release 2.0.1
+-------------
+a, New features:
+   - [connection] INonBlockingConnection - method getWriteTransferRate added
+   - [connection] Server - new (empty implemented) life cycle method 'onClosed', which can be overridden by inheriting implementations
+   - [connection] Server - new method getOpenConnections() 
+   - [connection] IServer - new method start()
+   - [connection] INonblockingConnection - isReadSuspended method added
+   - [connection] INonblockingConnection - getHandler method added
+   - [connection] NonBlockingConnection - supports dynamic replacing of the handler at any time    
+   - [connection] new configuration parameter "org.xsocket.connection.client.readbuffer.defaultMaxReadBufferThreshold" and "org.xsocket.connection.server.readbuffer.defaultMaxReadBufferThreshold"
+   - [connection] AbstractNonBlockingStream - "empty" implemented method onPreWrite() added
+   - [connection] NonBlockingConnection - constuctors added, which supports waitForConnect parameter 
+   - [connection] NonBlockingConnection - getNumberOfReceivedBytes() & getNumberOfSendBytes() have become public  
+
+b, Bug fix/Implementation changes:
+    - [*] (robustness improvement) SerializedTaskQueue#performMultiThreaded: if given worker pool rejects the task, a dedicated daemon thread will be started by the SerializedTaskQueue
+    - [connection] (improvement for non threaded mode) The IoSocketDispatcher first tries to write data by bypassing the selector. If this fails the appropriated selection key will be set       
+    - [connection] Bug fix: 'ThrottledWrite - incorrect write rate if more than one ByteBuffer is queued'
+    - [connection] Bug fix: 'IoSocketDispatcher - confusing warning message ConcurrentModification exception'
+    - [connection] Bug fix: 'IoDispatcher thread is not a daemon thread'
+    - [connection] Bug fix: '[1972901] race condition non threaded mode with SSL.' -> IoSSLHandler and IoSSLProcessor modified  
+    - [connection] In case of a write attempt the state of the connection will be set to isOpen==false, if an exception occurs by writing socket data
+    - [connection] NonBlockingConnection toString output modified 
+    - [connection] NonBlockingConectionPool: (Pooled) NonBlockingConnection toString output modified
+    - [connection] (xSocket internal class) IoChainableHandler: new method addToWriteQueue(ByteBuffer[]) and write() has been added
+    - [connection] ConnectionUtils - REsult of newMapCache() is thread-safe 
+    
+  

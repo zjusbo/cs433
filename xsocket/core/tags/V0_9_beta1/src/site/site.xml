@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<site>
+  <body>
+
+    <menu name="Documentation">
+      <item name="Architecture" href="http://xsocket.sourceforge.net/overview/overview.htm"/>
+      <item name="Tutorial" href="http://xsocket.sourceforge.net/tutorial/tutorial.htm"/>
+    </menu>
+
+
+    ${reports}
+
+  </body>
+</site>

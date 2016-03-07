@@ -1,0 +1,73 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="org.xsocket.connection.ServerMBeanProxyFactory$DispatcherPoolListener"/>
+        <!-- reason: Exception is caught when Exception is not thrown  -->
+        <Bug code="REC"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.Server"/>
+        <!-- reason: Exception is caught when Exception is not thrown  -->
+        <Bug code="REC"/>
+    </Match>    
+    <Match>
+        <Class name="org.xsocket.connection.IoProvider"/>
+        <!-- reason: readBooleanProperty() returns NULL  -->
+        <Bug code="NP"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.IoSocketDispatcherPool"/>
+        <!-- reason: unsynchronized access of size -->
+        <Bug code="IS"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.IoSocketHandler"/>
+        <!-- reason: should return a zero length array rather than null? -->
+        <Bug code="PZLA"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.NonBlockingConnectionPool"/>
+        <!-- reason: Unconditional wait -->
+        <Bug code="UW"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.AbstractNonBlockingStream"/>
+        <!-- reason: getFlushMode <-> getFlushmode -->
+        <Bug code="Nm"/> 
+     </Match>
+     <Match>
+        <Class name="org.xsocket.connection.BlockingConnection"/>
+        <!-- reason: getFlushMode <-> getFlushmode -->
+        <!-- reason: wait in loop  -->
+        <Bug code="Nm, Wa"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.NonBlockingConnection"/>
+        <!-- reason: wait in loop  -->
+        <Bug code="Wa"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.NonBlockingConnection$SyncIoConnectorCallback"/>
+        <!-- reason: wait in loop  -->
+        <Bug code="Wa"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.HandlerChain"/>
+        <!-- reason: unset IServer field (which will be injected) -->
+        <Bug code="UwF"/>
+    </Match>
+    <Match>
+        <Class name="org.xsocket.connection.IoProvider$DispatcherPoolListener"/>
+        <!-- reason: Exception is caught when Exception is not thrown in onDispatcherAdded/onDispatcherRemoved -->
+        <Bug code="REC"/>
+    </Match>  
+    <Match>
+        <Class name="org.xsocket.connection.ConnectionUtils"/>
+        <!-- reason: invokes java.lang.reflect.Field.setAccessible(boolean), which should be invoked from within a doPrivileged block -->
+        <Bug code="DP"/>
+    </Match>
+    <Match>
+    <Class name="org.xsocket.IntrospectionBasedDynamicMBean"/>
+        <!-- reason: invokes java.lang.reflect.Field.setAccessible(boolean), which should be invoked from within a doPrivileged block -->
+        <Bug code="DP"/>
+    </Match>
+</FindBugsFilter>

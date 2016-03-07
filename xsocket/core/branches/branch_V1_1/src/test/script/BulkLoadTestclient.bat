@@ -1,0 +1,1 @@
+java -cp ../../../bin org.xsocket.tcp.RunnableBulkLoadClient %1 %2 %3 %4

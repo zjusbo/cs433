@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+
+    <script type="text/javascript" src="../dojo/dojo.js"></script>
+    <script type="text/javascript" src="../dojox/cometd.js.uncompressed.js"></script>
+
+
+	<script type="text/javascript">
+
+		dojo.require("dojox.cometd");
+		publishHandler = function(msg) {
+
+			alert(msg.data.test);
+
+		}
+
+
+
+		dojox.cometd.init("/service/cometd");
+
+
+//		sendMessage = function() {
+
+			//var text = document.getElementById("message").value;
+
+			//if (text == null || text.length==0)
+
+//			var text = "hello world";
+//			dojox.cometd.publish('/hello/world', { test: text } );
+//		} 
+
+
+        sendMsg = function() {
+        	dojox.cometd.publish('/hello/world', "{ test: text }" );
+        }
+
+		subscribe = function() {
+
+			dojox.cometd.subscribe("/hello/world", this, "publishHandler");
+		} 
+
+		
+		unsubscribe = function() {
+
+			dojox.cometd.unsubscribe("/hello/world");
+		}
+
+		
+		
+		
+	</script>
+    
+
+  </head> 
+
+  <body>
+   <form> 
+    	<input type="button" name="start" value="subscribe" onclick="javascript:subscribe()"/> <br/>
+		<input type="button" name="unsubscribe" value="unsubscribe" onclick="javascript:unsubscribe()"/> <br/>
+		<input type="button" name="sendMessage" value="sendMessage" onclick="javascript:sendMsg()"/> <br/>
+  	</form>
+  </body>
+</html>

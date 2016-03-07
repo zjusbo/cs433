@@ -1,0 +1,1 @@
+java -Xmx500000000 -server -cp target/xsocket_benchmark-0.0.3-jar-with-dependencies.jar -Dorg.xsocket.connection.dispatcher.handlesMaxCount=60 org.xsocket.connection.NotifyHttpServer 9191 

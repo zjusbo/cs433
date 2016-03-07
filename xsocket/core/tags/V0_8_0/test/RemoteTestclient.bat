@@ -1,0 +1,1 @@
+java -cp ../bin org.xsocket.server.SmtpTestClient 192.168.1.89 %1 %2

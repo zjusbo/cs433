@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Untitled Page</title>
+
+<meta name="GENERATOR" content="Created by BlueVoda"></head><body background="overview-Dateien/back01.jpg" bgcolor="#ffffff" text="#000000">
+<div style="position: absolute; left: 18px; top: 0px; width: 492px; height: 272px; z-index: 0;" align="left">
+<font style="font-size: 15px;" color="#000000" face="Arial">xSocket is
+a lightweight java nio-based server framework to build high
+performance, high scalable, multithreaded servers. Aspects like thread
+handling or asynchronous reads/writes are encapsulated within the
+framework. <br>
+<br>
+One major goal of xSocket is the easy of use. xSocket should help to
+write java nio-based servers without deep knowledge about reading,
+reading or thread synchronization aspects of nio-based non blocking
+communication<br>
+<br>
+The framework itself consists of 3 major part. <br>
+- The multithreaded server, which forwards new connections to the assigned Dispatchers (round robin algorithm). <br>
+- The Dispatchers which perform the read and write operation on the
+connection. By doing this, the Dispatcher calls the registered Handler.
+<br>
+- The Handler, which could be a ConnectHandler or a DataHandler or
+both, is responsible to process the incoming data and to generate the
+response</font>
+</div>
+<img src="overview-Dateien/architecture.JPG" alt="" style="position: absolute; left: 36px; top: 276px; width: 441px; height: 200px; z-index: 1;" align="top" border="0" height="200" width="441">
+</body></html>

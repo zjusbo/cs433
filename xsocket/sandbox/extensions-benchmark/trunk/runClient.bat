@@ -1,0 +1,2 @@
+REM <host> <port> <workers> <cons> <openNew?> <loops> <dataSize> <waitTime>
+java -Xmx500000000 -cp target/xsocket_benchmark-0.0.3-jar-with-dependencies.jar org.xsocket.connection.LoadClient localhost 9090 10 %1 false 10000000 100 100

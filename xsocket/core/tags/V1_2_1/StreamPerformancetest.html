@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+  <title>Performance test</title>
+  <meta name="generator" content="Amaya 9.53, see http://www.w3.org/Amaya/" />
+</head>
+
+<body>
+<h1>Performance goals (stream-based Server)</h1>
+
+<h2>Response time &amp; throughput</h2>
+
+<p>The <em>response time</em> is the elapsed time between receiving a client
+request and sending the associated server response. For a bad scalable system
+the response time increases rapidly by increasing the load. The
+<em>throughput</em> is the measure of work which is done in a unit of time.
+It shows how many requests can be handled over a period of time. Ideally, as
+long as free system resources are available the throughput increases as the
+load increases. But, by reaching the resource limit or scalability limit the
+throughput could tend to fall, caused by the increased request and resource
+management overhead. </p>
+
+<p><em><strong><em></em></strong></em><strong><em>goal</em>: xSocket is as
+fast as the fastest application-neutral nio-library, which is based on the
+standard JSE APIs. The goal is reached, if the response time and throughput
+max of the reference library has been exceeded under same condition (+/- 5%
+tolerance).</strong></p>
+
+<p></p>
+
+<h2>Scalability</h2>
+
+<p><em>Scalability</em> means, that the system can serve a single client as
+well as thousands of simultaneous clients, by keeping the required quality of
+services like response time. Under an increased load, a good scalable system
+will increase the throughput linearly proportional to the number of added
+hardware resources (scale up). </p>
+
+<p><strong><em>goal:</em></strong> <strong>xSocket is as scalable as the most
+scalable application-neutral nio-library, which is based on the standard JSE
+APIs. The goal is reached, if the scalability max of the reference library
+has been exceeded under same condition (+/- 5% tolerance).</strong></p>
+
+<p></p>
+
+<h1>TestCases</h1>
+
+<p>As server handler a simple EchoHandler will be used. This handler only
+returns the received data. The handler doesn't implement additional waits to
+simulate processing of the received data like file reading or
+computations.</p>
+<pre>/**
+ * Test handler
+ * /
+public final class EchoHandler implements IConnectHandler, IDataHandler {
+
+   public boolean onConnect(INonBlockingConnection connection) throws IOException {
+      return true;
+   }
+  
+   public boolean onData(INonBlockingConnection connection) throws IOException, BufferUnderflowException {
+      connection.write(connection.readAvailable());
+      return true;
+   }
+
+   public boolean onDisconnect(INonBlockingConnection connection) throws IOException {
+      return true;
+   }
+}</pre>
+
+<p>The test parameters are:</p>
+<ul>
+  <li>data packet size: &lt;size&gt; bytes</li>
+  <li>concurrent permantent connections: &lt;count&gt; </li>
+  <li>open new connection for request?: &lt;true|false&gt; </li>
+  <li>Server (os, cpu, memory, ...): </li>
+  <li>Network bandwith: </li>
+  <li>Test clients: </li>
+</ul>
+
+<p>Test results (with example content):</p>
+
+<table border="1" cellspacing="0" cellpadding="0" width="788">
+  <tbody>
+    <tr>
+      <td width="123" nowrap="nowrap" valign="bottom"><p><b>time</b></p>
+      </td>
+      <td width="104" nowrap="nowrap" valign="bottom"><p
+        align="center"><b>throughput (calls/sec)</b></p>
+      </td>
+      <td width="561" nowrap="nowrap" colspan="8" valign="bottom"><p
+        align="center"><b>latency (millis)</b></p>
+      </td>
+    </tr>
+    <tr>
+      <td width="123" nowrap="nowrap" valign="bottom"><p><strong></strong></p>
+      </td>
+      <td width="104" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong></strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>min</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>max</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>average</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>median</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>p75</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>p90</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>p95</strong></p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p
+        align="center"><strong>p99</strong></p>
+      </td>
+    </tr>
+    <tr>
+      <td width="123" nowrap="nowrap" valign="bottom"><p>12:28:01</p>
+      </td>
+      <td width="104" nowrap="nowrap" valign="bottom"><p
+        align="center">35230</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">0</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">409</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">0</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">2</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="123" nowrap="nowrap" valign="bottom"><p>12:28:03</p>
+      </td>
+      <td width="104" nowrap="nowrap" valign="bottom"><p
+        align="center">36320</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">0</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">409</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">0</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">0</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">1</p>
+      </td>
+      <td width="48" nowrap="nowrap" valign="bottom"><p align="center">2</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h2>Overhead of connection lifecycle test</h2>
+
+<p>Test parameters:</p>
+<ul>
+  <li>data packet size: 20 bytes</li>
+  <li>concurrent permantent connections: 20 </li>
+  <li>open new connection for request?: false (test A), true (test B) </li>
+  <li>Server (os, cpu, memory, ...): ?</li>
+  <li>Network bandwith: ?</li>
+  <li>Test clients: ?</li>
+</ul>
+
+<p>Result: The differences between the results of test A and test B shows the
+overhead for creating connections.</p>
+
+<p></p>
+
+<h2>Response time &amp; througput tests</h2>
+
+<p>Test parameters:</p>
+<ul>
+  <li>data packet size: 20, 100, 500, 2000, 5000, 10000, 25000, 50000 bytes
+    (test A, B, ...)</li>
+  <li>concurrent permantent connections: 10, 100, 1000 (test A1, A2, A3, B1,
+    B2, ...)</li>
+  <li>open new connection for request?: false </li>
+  <li>Server (os, cpu, memory, ...): ?</li>
+  <li>Network bandwith: ?</li>
+</ul>
+
+<p></p>
+
+<h2>Scalability Tests</h2>
+
+<p>Test parameters:</p>
+<ul>
+  <li>data packet size: 20</li>
+  <li>concurrent permantent connections: 10, 100, 1000, 2000, 5000, 10000,
+    25000, 50000, 100000, ... (test A, B, C, ...)</li>
+  <li>open new connection for request?: false </li>
+  <li>Server (os, cpu, memory, ...): ?</li>
+  <li>Network bandwith: ?</li>
+</ul>
+
+<p></p>
+</body>
+</html>

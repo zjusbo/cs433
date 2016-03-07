@@ -1,0 +1,46 @@
+
+
+
+ - The datagram size will vary as I get it from an external entity. The max 
+size of datagram allowed for UDP is 64KB. I was wondering if xSocket can 
+detect the size of datagram by itself, without I being to specify it 
+specifically in the constructor.
+
+
+
+ 
+ 3.0 (includes non backward compatible API changes) 
+========================================================
+ [*] using NIO.2 internally and provide new NIO.2 interfaces such as AsynchronousChannel
+ [connection] NonBlockingConnection- disable autoconnec. seehttps://sourceforge.net/tracker/?func=detail&aid=2964167&group_id=169583&atid=850945
+ [connection] reuse ByteBuffer!
+ [connection] readSignedByte(), readUnsignedeByte()
+ [connection] NonBlockingConnection - don't call onData() by disconnecting?
+ [connection] (Non)BlockingConnection - avoid overloaded constructors. Don't connect implicit, uses connect() instead
+ [connection] (Non)BlockingConnection - only confusing thing is thread-model and sync/async flushing. if 
+                                        don't combind thread-model and flushing mode properly, it will 
+                                        lead strange result.
+ [connection] (Non)BlockingConnection - break the API down into 3 classes: Connection, DataSink and DataSource. 
+                                        Connection providesa getDataSink and getDataSource method, and all read
+                                        and write method just available in Sink and Source.
+ [connection] filterChain improvments
+              -> " I have deep into mina's filterChain,  I found it so flexible(but a little tedious and complex).
+              
+                   for xsocket, it is separate callback into some callback interfaces (onData, onConnnect, etc), which 
+                   is more simple and clear; and in xsocket, IOCallback is hidden in inner, which make callback for user more easy.
+                   but sometimes, i need control the raw byteBuffer in receiving and sending, for examples, I wanna add gzip filter. 
+                   now I could add just in onData callback. add a filter is not so easy, need modify Connection class.
+                   
+                   so, I check the mina's filterChain, i found it put filter in a stack, I could add Filter dynamicly. 
+                   xsocket's HandlerChain is static, no nextFilter, cannot intercept packets handling.
+                   and now, i wanna add codec upon xsocket, i found i need more operation with NonblockingConnection after
+                   onData and before flush. 
+                   
+                   It is my suggestion of filterChain."
+                 
+
+ [connection] "sendFile" - improved, direct file support on IO level (Streaming-Files)
+ [connection] readByte(), readInt performance optimizations by avoiding methdod readSingleByteBuffer!
+ [connection] BlockingConnection(nbc) saves the assigned handler of the NonBlockingConnection?? really? possible side-effects!!!
+ [connection] improved MapCache (CopyOnWriteMapCache????)
+ 

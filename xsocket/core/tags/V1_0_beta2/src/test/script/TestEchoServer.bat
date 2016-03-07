@@ -1,0 +1,1 @@
+java -cp ../../../bin org.xsocket.server.RunnableEchoServer %1

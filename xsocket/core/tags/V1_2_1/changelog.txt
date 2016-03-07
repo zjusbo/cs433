@@ -1,0 +1,214 @@
+xSocket - Changelog
+===================
+
+
+
+Release 1.2.1
+-------------
+a, New features:
+   - none
+
+b, Bug fix/Implementation changes:
+   - [*] Non US-ASCII ' character in JavaDoc has been replaced by US-ASCII character ` (0x60)
+   - [stream] Accessing the attachment of an connection is now conform to JavaBean design
+   - [stream] INonBlockingConnection: readAvailableByDelimiter(..., WritableByteChannel) has been replaced by transferToAvailableByDelimiter        
+   - [stream] the size of the default worker pool has been reduced to 40 (former 250)
+   - [stream] BUG 'suspend read doesn't work' has been fixed
+   - [stream] BUG 'getIndexOf(..., int maxLength) doesn't throw a MaxReadSizeExceededException if delimiter has been found and read size is Exceeded' has been fixed
+   - [stream] BUG [1789897] unexpected java.lang.IllegalMonitorStateException has been fixed
+   - [stream] BUG [1801904] Problem with SSL has been fixed
+   - [stream] Workaround for FreeBSD/Java bug (http://www.freebsd.org/cgi/query-pr.cgi?pr=105482&cat=): IoSocketHandler - In case of write OP_READ will set, too
+
+
+
+
+Release 1.2
+-----------
+a, New features:
+   - [*] read/writeShort method has been added for IDataSink/IDataSource
+   - [*] getOption() method has been added for IEndpoint and IConnection (<X>SocketConfiguration has been deprecated)
+   - [stream] IConnection: suspendRead & resumeRead methods has been added
+   - [stream] IServerContext: getWorkerpool method has been added
+   - [stream] all read by delimiter methods now supports a (overloaded) signature with encoding
+   - [stream] getPendingWriteDataSize() method has been added for the IConnection interface
+   - [stream] an SPI interface has been defined to plugin external nio providers
+   - [stream] handler support for NonblockingConnectionPool has been added
+
+
+
+b, Bug fix/Implementation changes:
+   - [*] IWorkerPool has been deprecated/replaced by java.util.concurrent.Executor
+   - [*] DynamicWorkerPool has been deprecated. Use java.util.concurrent.Executor implementation instead
+   - [stream] MultithreadedServer: by default host address "0.0.0.0" will be used instead of getLocalHost()
+   - [stream] the MultithreadedServerMBeanProxyFactory and ConnectionPoolMBeanProxyFactory class have been moved to the stream package
+   - [stream] some low level related settter and getter methods of the IMultithreadedServer has been deprecated
+   - [stream] internal performance/thread optimizations (especially for non multithreaded server mode (workerpool == null))
+   - [stream] BUG 'onDataHandler call loops by using the read mark-methods' has been fixed
+   - [stream] BUG 'throwing of an io exception by handling method (onData, onConnect, ...) doesn't close the connection'
+   - [stream] BUG 'read by delimiter in a readMarked mode swallows the delimiter' has been fixed as suggested by Karsten Ohme. Thanks!
+   - [stream] BUG 'closing of a closed Connection throws an io exception' has been fixed. If the connection is already closed then invoking of this method will have no effect
+   - [stream] the low level io classes of xSocket has been moved to a dedicated io package (which implements the SPI)
+   - [stream] ThrottlingWriteHandler (which supports the setWriteTransferRate method) has been rewritten
+   - [stream] IoSocketHandler: performance optimization: close will only initiate a write loop if there really remaining data to write
+
+
+
+Release 1.1
+-----------
+a, New features:
+   - [*] add SocketConfiguration-Support for stream and datagram sockets
+   - [stream] (Client) ConnectionPool has been added for Blocking and for Nonblocking connection
+   - [stream] IServerContext getNumberOfOpenConnections has been added
+   - [stream] MultithreadedServer: by setting the workerpool with null, the multithreading will be deactivated
+   - [stream] Convenience methods for the readByDelimiter methods have been added. The additional method doesn't require a size parameter.
+   - [stream] IConnection supports the attachment of a single arbitrary object
+   - [stream] getIndexOf method has been added for IConnection
+   - [stream] support of non-synchronized handlers by introducing the Synchronized annotation. By default the handlers are synchronized based on the connection instance
+
+b, Bug fix/Implementation changes:
+   - [*] BUG [1711566] Strange IOException has been fixed. (for closed connections) a ClosedConnectionException will be thrown instead of a IOException
+   - [stream] by default the autoflush is activated (for all connection types)
+   - [stream] BUG [1690731] onData() is being called before onConnected() has been fixed
+   - [stream] BUG [1699007] Acceptor setReuseAddress has been fixed
+   - [stream] BUG [1712222] Changes to ConnectionClosedException break JDK 1.5 compat has been fixed
+   - [stream] BUG [1712249] SSL will not work with plain SSL client socket (SSL activation within onConnect method) has been fixed
+   - [stream] Unhandled MaxReadSizeException within the IDataHandler onData-Method will cause that the underlying connection will be closed
+   - [stream] read(ByteBuffer) method of NonBlockingConnection & BlockingConnection has been fixed.
+     [stream] The position of the given buffer will be shifted by the number of  byte transfered. The
+     BlockingConnection will block until at one byte is read (& least one byte is remaining in the buffer)
+   - [stream] DataConverter toString(ByteBuffer[]) has been fixed to avoid exception caused by characters which are spanned over 2 arrays
+   - [stream] BUG: 'calling toString() of a closed connection throws a NullPointerException' has been fixed
+   - [stream] redesign of the SSL-handling classes
+
+
+
+Release 1.0
+-----------
+a, New features:
+    - The WorkerPool class has been replaced by a IWorkerPool interface and a DynamicWorkerPool
+      to give more control on the thread management. By default the automanaged DynamicWorkerPool
+      will be used for endpoints and connections
+    - Endpoint & MultithreadServer allows to determine the ip address for the server to bind to
+    - [stream] new handler support for the NonBlockingConnection (client) constructor: It supports now
+               IDataHandler, IConnectHandler, IDisconnectHandler and the ITimeoutHandler
+    - [stream] BlockingEndpoint and BlockingConnectedEndpoint has been added
+    - [stream] indexOf method has been added for the INonBlockingConnection
+
+
+b, Bug fix/Implementation changes:
+    - a mandatory maxLength parameter has been added for the readByDelimiter methods, to avoid
+      unlimited, undesirable reads and memory problems caused by the internal data buffering.
+    - [stream] by DEFAULT the AUTOFLUSH is deactivated (for all connection types)
+    - [stream] the jmx supported has been redesigned by separating the jmx topics into the new org.xsocket.stream.management package
+    - [stream] parameter applicationDomain has been removed from MultithreadedServer
+    - [stream] the class IHandlerServerContext has been renamed into IServerContext
+    - [stream] The in parameter of the DisconnectHandler's callback is now INonBlockingConnection instead of the connection id
+    - [stream] IConnection method startSSL has been renamed into activateSecuredMode
+    - [datagram] data length bug at NonBlockingMulticastEndpoint.receive() has been fixed. Thanks to Thorsten Bonhagen
+                 for his report/fix
+    - [datagram] Packet has been renamed to UserDatagram
+    - [datagram] datagram package has been simplified, by merging the non-blocking and blocking endpoints
+    - [stream] MultithreadedServer/Dispatcher: shutdown/isRunning has been renamed to close/isOpen
+    - [stream] setReceiveTimeoutMillis of IBlockingConnection has been renamed into setTimeoutMillis
+               (timeout is valid for flush operation, too)
+
+
+
+Release 1.0-beta-4
+------------------
+a, New features:
+    - IDataSink and IDataSource as super interface for IConnection and Packet has been added
+    - mark and reset methods for IConnection has been added
+    - IConnection extends the ReadableByteChannel and WritableByteChannel interface
+    - Datagram Endpoints has been redesigned and renamed
+
+b, Bug fix/Implementation changes:
+    - receiveXX methods of IBlockingConnection has been renamed into readXX method
+
+
+
+
+Release 1.0-beta-3
+------------------
+a, New features:
+    - UDP support
+    - user controlled autoflush for connections
+
+b, Bug fix/Implementation changes:
+    - package structure has been reorganized
+
+
+
+Release 1.0-beta-2
+------------------
+a, New features:
+   - on-the-fly ssl activaton for a open connection
+   - on-the-fly transfer rate control for NonBlockingConnections
+   - NonBlockingConnection support for client side
+   - read/receiveByLength method has been added for the Connection
+
+b, Bug fix/Implementation changes:
+  - the xxWord methods has been renamed into xxString methods
+  - the xxRecord methods has been renamed into xxByteBuffer methods
+  - the command classes has been moved out of this project
+  - IConnection#writeByte() method has been fixed
+  - Bugfixing for bug 'delimiter based-method fail by using a single char delimiter'
+  - The watchdog threads for dispatcher has been reduced to a single one
+  - INonBlockingConnection interface has been moved
+  - some SSL bugfixing
+  - setTimeout-methods of MultithreadedServer has been modified to accept seconds
+  - MultithreadedSSLServer has been removed, because the MutlithreadedServer supports SSL
+  - read/receiveWord/Record has been renamend in read/receiveWord/RecordByDelimiter
+
+
+
+Release 1.0-beta-1
+------------------
+a, New features:
+   - Helperclasses for command-based DataHandler
+   - ITimeoutHandler has been added for individual connection and idle timeout handling
+
+b, Bug fix/Implementation changes:
+  - ByteBufferUtils#extract-method: now returns ByteBuffer[0] in case of a extracted "null-value" (instead of null)
+  - NonBlockingConnection: Performance improvements for read<type>-Methods with delimiter
+  - Internal Thread-Synchronization has been optimized
+  - pre definied handlers has been moved under the server.handler package
+  - package structure of test code has been reorganized
+  - harmonization of the on<Event>-Methods of the specific handlers
+
+
+
+Release 0.9.0-beta-1
+--------------------
+a, New features:
+  - read and write methods has been added for the connection interfaces
+  - server-side ssl support has been added
+  - ant-build has been replaced with maven-build
+
+b, Bug fix/Implementation changes:
+  - BlockingConnection: receive methods in BlockingConnection has been fixed
+  - Chain: If the handler raises an exception within the chain, the same handler will be recalled in a loop
+  - ByteBufferQueue: wrong terminator detection has been fixed
+
+
+
+Release 0.8.0
+-------------
+a, New features:
+  - nonen
+
+b, Bug fix/Implementation changes:
+  - Improved error and debug output handling for AbstractConnection and Chain
+  - some bug fixes
+
+
+Release 0.8.alpha2
+------------------
+a, New features:
+ - First public release
+
+b, Bug fix/Implementation changes:
+ - nonen
+
+
+

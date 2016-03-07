@@ -1,0 +1,1 @@
+java -cp ../../../bin;../../../../xsocket_core/bin org.xsocket.server.handler.smtp.RunnableSMTPServer %1

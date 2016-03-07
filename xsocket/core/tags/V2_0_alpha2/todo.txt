@@ -1,0 +1,10 @@
+
+TODO
+====
+
+- revise JavaDoc
+- test for Java 1.6 artifacts
+- redesign JMX 
+- Improve error log output (shutdown -> nextDispatcher loop)
+- reintroduce the HandlerChain
+- Redesign HandlerProxy -> more optimized

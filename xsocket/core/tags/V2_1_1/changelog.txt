@@ -1,0 +1,62 @@
+xSocket - change log
+====================
+
+
+Release 2.1.1
+-------------
+a, New features:
+   - [connection] NonBlockingConnectionPool/BlockingConnectionPool - method getNumCreationError added
+   - [connection] ConnectionUtils - method getImplementationVersion() &  getImplementationDate() added
+   - [connection] DataConverter - method toFormatedRFC822Date() & toDate() added
+   - [connection] INonBlockingConnection - isSecuredModeActivateable() added 
+   
+b, Bug fix/Implementation changes:
+   - [connection] IoSocketHandler - merges fragmented out data by writing it (reduces kernel write calls and avoids delayed writing if SO_OPTION NO_DELAY is false)
+   - [connection] AbstractNonBlockingStream/ReadQueue - remove unnecessary cloneable support   
+   - [connection] Bug fix: '[non threaded mode] repeated write could fail, if not all data is written'
+   - [connection] AbstractNonBlockingStream - new method appendDataToReadBuffer(ByteBuffer[] data, int size) has been added & appendDataToReadBuffer(ByteBuffer[] data) has become deprecated    
+   - [connection] Bug fix: NonBlockingConnection#isSecure returns false in case of SSL-based server-side connection
+   - [connection] Server#getVersion() and ConnectionUtils#getVersionInfo() has become deprecated. 
+   - [connection] Server#run() has become on-final
+   - [connection] NonBlockingConnectionPool#close() doesn't close the idling connections
+    
+
+
+Release 2.1
+-----------
+a, New features:
+   - [connection] INonBlockingConnection - method getWriteTransferRate added
+   - [connection] Server - new (empty implemented) life cycle method 'onClosed', which can be overridden by inheriting implementations
+   - [connection] Server - new method getOpenConnections() 
+   - [connection] IServer - new method start()
+   - [connection] INonblockingConnection - isReadSuspended method added
+   - [connection] INonblockingConnection - getHandler method added
+   - [connection] NonBlockingConnection - supports dynamic replacing of the handler at any time    
+   - [connection] new configuration parameter "org.xsocket.connection.client.readbuffer.defaultMaxReadBufferThreshold" and "org.xsocket.connection.server.readbuffer.defaultMaxReadBufferThreshold"
+   - [connection] AbstractNonBlockingStream - "empty" implemented method onPreWrite() added
+   - [connection] NonBlockingConnection - constuctors added, which supports waitForConnect parameter 
+   - [connection] NonBlockingConnection - getNumberOfReceivedBytes() & getNumberOfSendBytes() have become public  
+
+b, Bug fix/Implementation changes:
+    - [*] (robustness improvement) SerializedTaskQueue#performMultiThreaded: if given worker pool rejects the task, a dedicated daemon thread will be started by the SerializedTaskQueue
+    - [connection] (improvement for non threaded mode) The IoSocketDispatcher first tries to write data by bypassing the selector. If this fails the appropriated selection key will be set       
+    - [connection] Bug fix: 'ThrottledWrite - incorrect write rate if more than one ByteBuffer is queued'
+    - [connection] Bug fix: 'IoSocketDispatcher - confusing warning message ConcurrentModification exception'
+    - [connection] Bug fix: 'IoDispatcher thread is not a daemon thread'
+    - [connection] Bug fix: '[1972901] race condition non threaded mode with SSL.' -> IoSSLHandler and IoSSLProcessor modified  
+    - [connection] In case of a write attempt the state of the connection will be set to isOpen==false, if an exception occurs by writing socket data
+    - [connection] NonBlockingConnection toString output modified 
+    - [connection] NonBlockingConectionPool: (Pooled) NonBlockingConnection toString output modified
+    - [connection] (xSocket internal class) IoChainableHandler: new method addToWriteQueue(ByteBuffer[]) and write() has been added
+    - [connection] ConnectionUtils - REsult of newMapCache() is thread-safe 
+    
+    
+  
+Release 2.0
+-----------
+a, New features:
+   - initial feature set of xSocket 2.0 
+
+b, Bug fix/Implementation changes:
+  
+  

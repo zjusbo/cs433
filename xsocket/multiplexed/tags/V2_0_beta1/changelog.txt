@@ -1,0 +1,13 @@
+xSocket multiplexed - Changelog
+===============================
+
+
+
+Release 2.0-beta-1
+------------------
+a, New features:
+    
+b, Bug fix/Implementation changes:
+
+
+

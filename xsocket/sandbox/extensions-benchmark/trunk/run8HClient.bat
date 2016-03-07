@@ -1,0 +1,1 @@
+java -Xmx500000000 -cp target/xsocket_benchmark-0.0.3-jar-with-dependencies.jar org.xsocket.connection.NotifyHttpClient XP-PC-SVEK 9191 8 false true

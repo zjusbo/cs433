@@ -1,0 +1,74 @@
+xSocket multiplexed - Changelog
+===============================
+
+
+Release 2.1.4
+-------------
+a, New features:
+   - 
+       
+b, Bug fix/Implementation changes:
+   - using xSocket 2.6 
+
+
+
+Release 2.1.3
+-------------
+a, New features:
+   - 
+       
+b, Bug fix/Implementation changes:
+   - Version check removed
+
+
+
+Release 2.1.2
+-------------
+a, New features:
+   - 
+       
+b, Bug fix/Implementation changes:
+   - using xSocket 2.4   
+
+
+
+Release 2.1.1
+-------------
+a, New features:
+   - Auto version check: writing a warning log if wrong xSocket version is used
+ 
+       
+b, Bug fix/Implementation changes:
+   -    
+   
+
+Release 2.1
+-----------
+a, New features:
+   - [connection] IWriteCompletionHandler support added 
+       
+b, Bug fix/Implementation changes:
+   - [*] POM update to create a OSGI-conform jar file. Thanks to Damien for providing the patch
+   - [*] Code cleaning based on findbugs and pmd reports
+   - [connection] IMultiplexer - new method public void multiplex(..., IWriteCompletionHandler completionHandler)
+   
+   
+
+
+Release 2.0.1
+-------------
+a, New features:
+    - MultiplexedUtils - method getImplementationVersion() &  getImplementationDate() added  
+    
+b, Bug fix/Implementation changes:
+   - MultiplexedUtils#getVersionInfo() has become deprecated.
+
+Release 2.0
+-----------
+a, New features:
+    - initial feature set of xSocket-multiplexed 2.0 
+    
+b, Bug fix/Implementation changes:
+
+
+

@@ -1,0 +1,939 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8"><title>java.net: Architecture of a Highly Scalable NIO-Based Server</title>
+	
+	<meta name="description" content="Gregor Roth shows how using an event-driven threading architecture can help NIO-based servers achieve maximum performance and capacity.">
+	<meta name="keywords" content="java.net,nio,threading,event-driven,thread-on-event,thread-per-connection,xsocket,reactor,Programming,Gregor Roth,">
+	<meta name="date" content="Feb. 13, 2007"><!--  CSS stylesheet  -->
+
+
+<link rel="stylesheet" href="testfile-Dateien/main.css" type="text/css">
+
+<link rel="shortcut icon" href="http://today.java.net/favicon.ico"><!-- stopindex --><!--  Common body tag  --></head><body leftmargin="0" topmargin="0" rightmargin="0" bgcolor="#ffffff" marginheight="0" marginwidth="0">
+<a name="top"></a>
+
+<!--  Masthead  --> 
+<div class="topline">
+<div class="topbar">
+<table border="0" cellpadding="0" cellspacing="0" height="25" width="100%">
+<tbody><tr>
+<td rowspan="2" width="100%"><a href="http://www.java.net/"><img src="testfile-Dateien/header_jnet_new.jpg" alt="The Source for Java Technology Collaboration" border="0" height="60" width="500"></a></td>
+ <td style="vertical-align: middle;" nowrap="nowrap">
+ <div id="login">
+ 
+  <form name="loginform" id="loginform" action="https://www.dev.java.net/servlets/TLogin" method="post">
+  <input name="redir" value="http://today.java.net/cs/user/print/a/350" type="hidden">
+  <div>
+  <strong>User:</strong>
+   <input name="loginID" id="loginID" value="" size="7" maxlength="32" type="text">
+   <strong>Password:</strong>
+
+   <input name="password" id="password" value="" size="7" maxlength="32" type="password">
+   <input name="Login" class="buttonred" id="Button" value="Login" type="submit"> </div>
+  <div class="small" align="right"><strong> <a href="https://www.dev.java.net/servlets/Join">Register</a>  | <a href="https://www.dev.java.net/servlets/TLogin">Login help</a>   &nbsp;&nbsp;&nbsp;</strong></div> 
+</form>
+ 
+</div>
+</td> 
+</tr>
+</tbody></table>
+</div>
+
+<!--  Tabs  -->
+
+
+<noindex>
+</noindex><div class="tabs" id="toptabs">
+<table border="0" cellpadding="4" cellspacing="0">
+<tbody>
+<tr>
+<td><a href="https://www.dev.java.net/servlets/StartPage">My       pages</a> </td>
+<td><a href="http://community.java.net/projects/">Projects</a></td>
+<td><a href="http://community.java.net/">Communities</a>   </td>
+<th><a href="http://www.java.net/">java.net</a></th>
+</tr></tbody></table></div>
+
+
+
+
+<table id="main" border="0" cellpadding="2" cellspacing="2" width="100%">
+  <tbody>
+  <tr valign="top">
+    <td id="leftcol" rowspan="2" width="150">
+	<img src="testfile-Dateien/a.gif" height="1" width="150"><br>
+<div id="navcolumn">
+<!--   COMMUNITY LINKS   -->
+<noindex>
+</noindex><div class="toolgroup" id="communitylinks">
+<div class="label"><strong>Get Involved</strong></div>
+<div class="body">
+<div><a href="https://java-net.dev.java.net/">java-net Project</a></div>
+<div><a href="http://www.java.net/request_project.csp">Request a Project</a></div>
+<div><a href="http://community.java.net/help_wanted/">Project&nbsp;Help&nbsp;Wanted&nbsp;Ads</a></div>
+<div><a href="http://community.java.net/projects/publicize.csp">Publicize your Project</a></div>
+<!-- <div><a href="#">Success Stories</a></div>  -->
+<div><a href="http://today.java.net/cs/user/create/bl">Submit Content</a></div>
+</div>
+</div>
+
+<div class="toolgroup" id="communitylinks">
+<div class="label"><strong>Get Informed</strong></div>
+<div class="body">
+<div><a href="http://www.java.net/about.csp">About java.net</a></div>
+<div><a href="http://today.java.net/pub/q/articles">Articles</a></div>
+<div><a href="http://weblogs.java.net/">Blogs</a></div>
+<div><a href="http://www.java.net/events">Events</a></div>
+<div><a href="http://today.java.net/today/alsotoday.csp">Also in Java Today</a></div>
+<div><a href="http://safari.java.net/">java.net Online Books</a></div>
+<div><a href="http://today.java.net/today/archive/">java.net Archives</a></div>
+</div>
+</div>
+
+<div class="toolgroup" id="communitylinks">
+<div class="label"><strong>Get Connected</strong></div>
+<div class="body">
+<div><a href="http://forums.java.net/">java.net Forums</a></div>
+<div><a href="http://wiki.java.net/">Wiki</a> and <a href="http://wiki.java.net/bin/view/Javapedia/WebHome">Javapedia</a></div>
+<div><a href="http://wiki.java.net/bin/view/People/WebHome">People</a>, <a href="http://partners.java.net/">Partners</a>, and <a href="http://wiki.java.net/bin/view/Javanet/JobsWiki">Jobs</a> </div>
+<div><a href="http://community.java.net/jugs/listing.csp">Java User Groups</a></div>
+<div><!--  <a href="https://java-net.dev.java.net/servlets/ProjectMailingListList">Newsletters</a> and  --><a href="http://today.java.net/pub/q/rsschannels">RSS Feeds</a></div>
+</div>
+</div>
+
+<div class="toolgroup" id="communitylinks">
+<div class="label"><b>Search</b></div>
+<div class="body">
+<form action="http://onesearch.sun.com/search/onesearch/index.jsp">
+<div>Web and Projects:</div>
+<div><input name="qt" class="medium" size="14" onfocus="if( this.value==this.defaultValue ) this.value='';" value="" type="text">
+<input name="col" value="all-unfiltered" type="hidden">
+<input name="qt" value="+url:java.net" type="hidden">
+<input class="buttonred" value=" » " border="0" type="submit"></div>
+</form>
+<div>Online Books:</div>
+<form action="http://safari.java.net/search" method="post" name="searchForm" id="form_searchForm">
+<input name="__formName" value="searchForm" type="hidden">
+<input value="simple" name="searchmode" id="searchmode" type="hidden">
+<input value="0" name="page" id="page" type="hidden">
+<input value="summary" name="searchview" id="searchview" type="hidden">
+<input value="rank" name="sort" id="sort" type="hidden">
+<input value="desc" name="order" id="order" type="hidden">
+<input value="1" name="NewSearch" id="NewSearch" type="hidden">
+<div>
+<input name="searchtextbox" id="searchtextbox" value="" class="medium" size="14" type="text">
+<input class="buttonred" value=" » " border="0" type="submit"></div>
+</form>
+<div><a href="http://www.java.net/search.csp">Advanced Search</a></div>
+</div>
+</div>
+
+
+</div>
+<br>
+</td>
+<td colspan="2" height="3"><img src="testfile-Dateien/a.gif" height="3" width="1"><br></td>
+</tr>
+<tr> 
+<td width="10"><img src="testfile-Dateien/a.gif" height="1" width="10"></td>
+<td valign="top" width="100%">
+
+<!-- startindex -->
+<!--  Begin SiteCatalyst code  -->
+<script language="JavaScript">
+<!--
+var s_channel="technical articles";
+//--></script>
+<!--  End SiteCatalyst code  -->
+
+<!--  begin discuss-print-email-blog options  -->
+<noindex>
+</noindex><table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr>
+<td class="smaller" valign="top">&nbsp;</td>
+<td width="10">&nbsp;</td>
+<td align="right" valign="bottom"><div class="sitelinks" style="padding: 0px;">
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<!--  email option  -->
+<td align="right" valign="bottom"><img src="testfile-Dateien/ic_email.gif" alt=" " border="0" height="12" hspace="4" vspace="1" width="14"></td>
+<td class="smaller" nowrap="nowrap" valign="bottom"><a href="mailto:?subject=Architecture%20of%20a%20Highly%20Scalable%20NIO-Based%20Server&amp;body=http://today.java.net/cs/user/print/a/350">E-mail</a></td>
+
+<!--  print option  -->
+<td>&nbsp;&nbsp;</td>
+<td align="right" valign="bottom"><img src="testfile-Dateien/ic_print.gif" alt=" " border="0" height="12" hspace="4" width="14"></td>
+<td class="smaller" nowrap="nowrap" valign="bottom"><a href="http://today.java.net/lpt/a/350">Print</a></td>
+
+<!--  discuss  -->
+<td>&nbsp;&nbsp;</td>
+
+<td align="right" valign="bottom"><img src="testfile-Dateien/ic_discuss.gif" alt=" " border="0" height="12" hspace="4" width="13"></td>
+<td class="smaller" nowrap="nowrap" valign="bottom"><a href="http://today.java.net/pub/a/today/2007/02/13/architecture-of-highly-scalable-nio-server.html?page=last#thread">Discuss</a></td>
+
+
+<!--  blog  -->
+<td>&nbsp;&nbsp;</td>
+<td align="right" valign="bottom"><img src="testfile-Dateien/ic_blog.gif" alt=" " border="0" height="12" hspace="4" width="14"></td>
+<td class="smaller" nowrap="nowrap" valign="bottom"><a href="http://today.java.net/cs/user/print/a/350?x-t=blog_link.view&amp;x-layout=blank" onclick="window.open('/cs/user/print/a/350?x-t=blog_link.view&x-layout=blank','Blog','toolbar=no,width=600,height=400,status=no,location=no,scrollbars=yes,resizable=yes,menubar=yes');return false">Blog</a></td> 
+</tr>
+</tbody></table></div>
+</td></tr>
+</tbody></table>
+
+<!--  end discuss-print-email-blog options  -->
+
+<div style="clear: both;"></div>
+<div class="contentdivider"><table class="grey4" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr><td><img src="testfile-Dateien/a.gif" alt=" " border="0" height="4" width="1"></td></tr></tbody></table></div>
+
+<!--  content here  -->
+<h2>
+<img src="testfile-Dateien/111-NIO.gif" alt="Architecture of a Highly Scalable NIO-Based Server" align="left" border="0" height="91" hspace="10" vspace="0" width="111">
+Architecture of a Highly Scalable NIO-Based Server</h2>
+by <a href="http://today.java.net/pub/au/542">Gregor Roth</a><br>
+02/13/2007<br clear="all">
+
+<div class="jumpnav">
+<ul>
+<li><strong>Contents</strong></li>
+<li><a href="#threading-architecture">Threading Architecture</a></li>
+<li><a href="#reactor-pattern">The Reactor Pattern</a></li>
+<li><a href="#component-architecture">Component Architecture</a></li>
+<li><a href="#acceptor">Acceptor</a></li>
+<li><a href="#dispatcher">Dispatcher</a></li>
+<li><a href="#dispatcher-level-eventhandler">Dispatcher-Level <code>EventHandler</code></a></li>
+<li><a href="#application-level-eventhandler">Application-Level <code>EventHandler</code></a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#resources">Resources</a></li>
+</ul>
+</div>
+
+<p>If you are asked to write a highly scalable Java-based server,
+it won't take long to decide to use the Java NIO package. To get
+your server running, you will probably spend a lot of time reading
+blogs and tutorials to understand the thread synchronization needs
+of the NIO <code>Selector</code> class and to deal with common
+pitfalls. This article describes the basic architecture of a
+connection-oriented NIO-based server. It takes a look at a
+preferred threading model and discusses the basic components of
+such a server.</p>
+
+
+<h3 id="threading-architecture">Threading Architecture</h3>
+
+
+<p>The first and most intuitive way to implement a multi-threaded
+server is to follow the <i>thread-per-connection</i>
+approach. This is the traditional pre-Java-1.4 solution, caused by
+the lack of non-blocking I/O support in older Java versions. The
+thread-per-connection approach uses an exclusive worker thread for
+each connection. Within the handling loop, a worker thread waits
+for new incoming data, processes the request, returns the response
+data, and calls the blocking socket's <code>read</code> method
+again.</p>
+<pre><code>
+public class Server {
+  private ExecutorService executors = Executors.newFixedThreadPool(10);
+  private boolean isRunning = true;
+  
+  public static void main(String... args) throws ... {
+    new Server().launch(Integer.parseInt(args[0]));
+  } 
+
+  public void launch(int port) throws ... {
+    ServerSocket sso = new ServerSocket(port);
+    while (isRunning) {
+      Socket s = sso.accept();
+      executors.execute(new Worker(s));
+    }
+  }
+
+  private class Worker implements Runnable {
+    private LineNumberReader in = null;
+    ...
+
+    Worker(Socket s) throws ... {
+      in = new LineNumberReader(new InputStreamReader(...));
+      out = ...
+    }
+
+    public void run() {
+      while (isRunning) {
+        try {
+          // blocking read of a request (line) 
+          String request = in.readLine();
+
+          // processing the request
+          ...
+          String response = ...
+
+          // return the response
+          out.write(resonse);
+          out.flush();
+        } catch (Exception e ) { 
+          ... 
+        }
+      }
+      in.close();
+      ...
+    } 
+  }
+}</code>
+</pre>
+
+
+<p>There is always a one-to-one relationship between simultaneous
+client connections and the number of concurrent worker threads.
+Because each connection has an associated thread waiting on the
+server side, very good response times can be achieved. However,
+higher loads require a higher number of running, concurrent
+threads, which limits scalability. In particular, long-living
+connections like persistent HTTP connections lead to a lot of
+concurrent worker threads, which tend to waste their time waiting
+for new client requests. In addition, hundreds or even thousands of
+concurrent threads can waste a great deal of stack space. Note, for
+example, that the <a href="http://java.sun.com/docs/hotspot/threads/threads.html">default
+Java thread stack size for Solaris/Sparc</a> is 512 KB.</p>
+<p>If the server has to handle a high number of simultaneous
+clients and tolerate slow, unresponsive clients, an alternative
+threading architecture is needed. The <i>thread-on-event</i>
+approach implements such requirements in a very efficient way. The
+worker threads are independent from the connections and will only
+be used to handle <i>specific</i> events. For instance, if a
+<i>data received</i> event occurs, a worker thread will be used to
+process the application-specific encoding and service tasks (or at
+least to start them). Once this job is complete, the worker will be
+returned to the thread pool. This approach requires performing the
+socket I/O operations in a non-blocking manner. The socket's
+<code>read</code> or <code>write</code> method calls have to be
+non-blocking. Additionally, an event system is required; it signals
+if new data is available, which in turn initiates the socket
+<code>read</code> call. This removes the one-to-one relationship
+between waiting reads and taken threads. The design of such an
+event-driven I/O system is described by the <i>Reactor
+pattern</i>.</p>
+<h3 id="reactor-pattern">The Reactor Pattern</h3>
+<p>The <a href="#resources">Reactor pattern</a>, illustrated in
+Figure 1, separates the detection of events like <i>readiness for
+read</i> or <i>readiness for accepting</i> and the processing of
+these events. If a readiness event occurs, an event handler will be
+notified to perform the appropriate processing within dedicated
+worker threads.</p>
+<p><img src="testfile-Dateien/reactor.png" alt="A NIO-based Reactor pattern implementation" height="339" width="450"><br>
+<i>Figure 1. A NIO-based Reactor pattern implementation</i></p>
+<p>To participate in the event architecture, the connection's
+<code>Channel</code> has to be registered on a
+<code>Selector</code>. This will be done by calling the
+<code>register</code> method. Although this method is part of the
+<code>SocketChannel</code>, the channel will be registered on the
+<code>Selector</code>, not the other way around.</p>
+<pre><code>
+...
+SocketChannel channel = serverChannel.accept();
+channel.configureBlocking(false);
+
+// register the connection
+SelectionKey sk = channel.register(selector, SelectionKey.OP_READ);
+...</code>
+</pre>
+
+
+<p>To detect new events, the <code>Selector</code> provides the
+capability to ask the registered channels for their readiness
+events. By calling the <code>select</code> method, the
+<code>Selector</code> collects the readiness events of the
+registered channels. This method call blocks until at least one
+event has been occurred. In this case, the method returns the
+number of connections that have become ready for I/O operations
+since the last <code>select</code> call. The selected connections
+can be retrieved by calling the Selector's <code>selectedKey</code>
+method. This method returns a set of <code>SelectionKey</code>
+objects, which holds the IO event status and the reference of the
+connection's <code>Channel</code>.</p>
+<p>A <code>Selector</code> is held by the <code>Dispatcher</code>.
+This is a single-threaded active class that surrounds the
+<code>Selector</code>. The <code>Dispatcher</code> is responsible
+to retrieve the events and to dispatch the handling of the consumed
+events to the <code>EventHandler</code>. Within the dispatch loop,
+the <code>Dispatcher</code> calls the <code>Selector</code>'s
+<code>select</code> method to wait for new events. If at least one
+event has been occurred, the method call returns and the associated
+channel for each event can be acquired by calling the
+<code>selectedKeys</code> method.</p>
+
+
+<pre><code>
+...
+while (isRunning) {
+  // blocking call, to wait for new readiness events
+  int eventCount = selector.select(); 
+ 
+  // get the events
+  Iterator&lt;SelectionKey&gt; it = selector.selectedKeys().iterator();
+  while (it.hasNext()) {
+    SelectionKey key = it.next();
+    it.remove();
+    
+    // readable event?
+    if (key.isValid() &amp;&amp; key.isReadable()) {
+      eventHandler.onReadableEvent(key.channel());
+    }
+   
+    // writable event? 
+    if (key.isValid() &amp;&amp; key.isWritable()) {
+      key.interestOps(SelectionKey.OP_READ); // reset to read only
+      eventHandler.onWriteableEvent(key.channel());
+    }
+    ...
+  }
+  ...
+}</code>
+</pre>
+
+
+<p>Based on an event like <i>readiness for read</i> or <i>readiness
+for write</i>, the <code>EventHandler</code> will be called by the
+<code>Dispatcher</code> to process the event. The
+<code>EventHandler</code> decodes the request data, processes the
+required service activities, and encodes the response data. Because
+worker threads are not forced to waste time by waiting for new
+requests to open a connection, the scalability and throughput of
+this approach is conceptually only limited by system resources like
+CPU or memory. That said, the response times wouldn't be as good
+as for the thread-per-connection approach, because of the required
+thread switches and synchronization. The challenge of the
+event-driven approach is therefore to minimize synchronizations and
+optimize thread management, so that this overhead will be
+negligible.</p>
+
+
+<h3 id="component-architecture">Component Architecture</h3>
+
+
+<p>Most highly scalable Java servers are built on the top of the
+<i>Reactor pattern</i>. By doing this, the classes of the Reactor
+pattern will be enhanced by additional classes for connection
+management, buffer management, and for load balancing reasons. The
+entry class of such a server is the <code>Acceptor</code>. This
+arrangement is shown in Figure 2.</p>
+
+<p><img src="testfile-Dateien/server.png" alt="Major components of a connection-oriented server" height="254" width="450"><br>
+<i>Figure 2. Major components of a connection-oriented server</i></p>
+
+
+<h3 id="acceptor">Acceptor</h3>
+
+<p>Every new client connection of a server will be accepted by the
+single <code>Acceptor</code>, which is bound to the server port.
+The <code>Acceptor</code> is a single threaded active class.
+Because it is only responsible for handling the very short-running
+client connection request, it is often sufficient to implement the
+<code>Acceptor</code> using the blocking I/O model. The
+<code>Acceptor</code> gets the handle of a new connection by
+calling the <code>ServerSocketChannel</code>'s blocking
+<code>accept</code> method. The new connection will be registered
+to a <code>Dispatcher</code>. After this, the connection
+participates in event handling.</p>
+<p>Because the scalability of a single <code>Dispatcher</code> is
+limited, often a small pool of <code>Dispatcher</code>s will be
+used. One reason for this limitation is the operating-system-specific implementation of the <code>Selector</code>. Most popular
+operating systems map a <code>SocketChannel</code> to a file handle
+in a one-to-one relationship. Depending on the concrete system, the
+maximum number of file handles per <code>Selector</code> is limited
+in a different way.</p>
+<pre><code>
+class Acceptor implements Runnable {
+  ...
+  void init() {
+    ServerSocketChannel serverChannel = ServerSocketChannel.open();
+    serverChannel.configureBlocking(true);
+    serverChannel.socket().bind(new InetSocketAddress(serverPort));
+  }
+
+  public void run() {
+    while (isRunning) {
+      try {
+        SocketChannel channel = serverChannel.accept(); 
+
+        Connection con = new Connection(channel, appHandler);
+        dispatcherPool.nextDispatcher().register(con);  
+      } catch (...) {
+        ...
+      }
+    }
+  }
+}</code>
+</pre>
+<p>In the example code, a <code>Connection</code> object holds the
+<code>SocketChannel</code> and an application-level event handler.
+These classes will be described below.</p>
+
+<h3 id="dispatcher">Dispatcher</h3>
+
+
+<p>By calling the <code>Dispatcher</code>'s <code>register</code>
+method, the <code>SocketChannel</code> will be registered on the
+underlying <code>Selector</code>. Here is where the trouble comes
+in. The <code>Selector</code> manages the registered channels
+internally by using <i>key sets</i>. This means that by registering a
+channel, an associated <code>SelectionKey</code> will be created
+and be added to the Selector's <i>registered key set</i>. At the
+same time, the concurrent dispatcher thread could call the
+<code>Selector</code>'s <code>select</code> method, which also
+accesses the key set. Because the key sets are not
+thread-safe, an unsynchronized registration in the context of the
+<code>Acceptor</code> thread can lead to deadlocks and race
+conditions. This can be solved by implementing the <i>selector
+guard object idiom</i>, which allows suspending the dispatcher
+thread temporarily. See "<a href="http://developers.sun.com/learning/javaoneonline/2006/coreplatform/TS-1315.pdf">
+How to Build a Scalable Multiplexed Server with NIO</a>" (PDF) for an
+explanation of this approach.</p>
+<pre><code>
+class Dispatcher implements Runnable {
+  private Object guard = new Object();
+  &#8230;
+
+  void register(Connection con) {
+    // retrieve the guard lock and wake up the dispatcher thread
+    // to register the connection's channel
+    synchronized (guard) {
+      selector.wakeup();  
+      con.getChannel().register(selector, SelectionKey.OP_READ, con);
+    }
+
+    // notify the application EventHandler about the new connection 
+    &#8230;
+  }
+
+
+  void announceWriteNeed(Connection con) {
+    SelectionKey key = con.getChannel().keyFor(selector);
+    synchronized (guard) {
+      selector.wakeup();
+      key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+    }
+  }
+
+  public void run() {
+    while (isRunning) {
+      synchronized (guard) {
+        // suspend the dispatcher thead if guard is locked 
+      }
+      int eventCount = selector.select();
+
+      Iterator&lt;SelectionKey&gt; it = selector.selectedKeys().iterator();
+      while (it.hasNext()) {
+        SelectionKey key = it.next(); 
+        it.remove();
+
+        // read event?
+        if (key.isValid() &amp;&amp; key.isReadable()) {
+          Connection con = (Connection) key.attachment();
+          disptacherEventHandler.onReadableEvent(con);
+        }
+
+        // write event?
+        &#8230;
+      }
+    }
+  }
+}</code>
+</pre>
+<p>After a connection has been registered, the
+<code>Selector</code> listens for readiness events of this
+connection. If a event occurs, the appropriated callback method of
+the <code>Dispatcher</code>'s event handler will be called by
+passing the associated connection.</p>
+
+<h3 id="dispatcher-level-eventhandler">Dispatcher-Level <code>EventHandler</code></h3>
+
+
+<p>The first activity performed while processing a <i>readiness for
+read</i> event is to call the channel's <code>read</code> method.
+In contrast to the streaming interface, the <code>Channel</code>
+interface requires that a read buffer has to be passed over. Often
+direct-allocated <code>ByteBuffer</code>s will be used. Direct
+buffers reside in native memory, bypassing the Java heap space. By
+using direct buffers, socket IO operations will be performed
+without the need to create internal intermediate buffers.</p>
+<p>Normally the <code>read</code> call will be performed very
+quickly. Depending on the operating system, the socket read
+operation often only puts a copy of the received data from the
+kernel memory space into the read buffer, which resides in the user-controlled memory space.</p>
+<p>The received data will be appended to the connection's
+<i>thread-safe</i> read queue for further processing. Based on the
+result of the I/O operation, application-specific tasks have to be
+processed. Such tasks will be processed by the assigned
+application-level event handler. This handler will typically called
+by using a worker thread.</p>
+<pre><code>
+class DispatcherEventHandler {
+  ...
+
+  void onReadableEvent(final Connection con) {
+    // get the received data 
+    ByteBuffer readBuffer = allocateMemory();
+    con.getChannel().read(readBuffer);
+    ByteBuffer data = extractReadAndRecycleRenaming(readBuffer);
+
+    // append it to read queue
+    con.getReadQueue().add(data); 
+    ...
+   
+    // perform further operations (encode, process, decode) 
+    // by a worker thread
+    if (con.getReadQueue().getSize() &gt; 0) {
+      workerPool.execute(new Runnable() {
+        public void run() {
+          synchronized (con) {
+            con.getAppHandler().onData(con);
+          }
+        }
+      }); 
+    }
+  }
+
+  void onWriteableEvent(Connection con) {
+    ByteBuffer[] data = con.getWriteQueue().drain();
+    con.getChannel().write(data); // write the data
+    ...
+
+    if (con.getWriteQueue().isEmpty()) {
+      if (con.isClosed()) {
+        dispatcher.deregister(con);
+      }
+
+    } else {
+       // there is remaining data to write
+       dispatcher.announceWriteNeed(con); 
+    }
+  }
+}</code>
+</pre>
+<p>Within the application-specific tasks, data will be encoded,
+services will be performed, and data will be written. By writing data,
+the data to send will be appended to the write queue, and the
+<code>Dispatcher</code>'s <code>announceWriteNeed</code> method will be called.
+This method causes the <code>Selector</code> to listen for
+<i>readiness for write</i> events. If such an event occurs, the
+<code>Dispatcher</code>-level event handler's method
+<code>onWriteableEvent</code> will be performed. It gets the data
+from the connection's write queue and performs the required write
+I/O operation. Trying to write data in a direct way, by bypassing
+this event approach, will end in deadlocks and race conditions.</p>
+
+
+<h3 id="application-level-eventhandler">Application-Level <code>EventHandler</code></h3>
+
+<p>In contrast to the <code>Dispatcher</code>'s event handler, the
+application-specific event handler listens for higher-level
+connection-oriented events, like <i>connection established</i>,
+<i>data received</i>, or <i>connection disconnected</i>. The
+concrete event handler design is one of the major differences
+between NIO server frameworks like <a href="http://www.eecs.harvard.edu/%7Emdw/proj/seda">SEDA</a>, <a href="http://mina.apache.org/">MINA</a>, or <a href="http://www.theserverside.com/tt/blogs/showblog.tss?id=DispellingNIOMyths">
+emberIO</a>. Such frameworks often implement a multi-staged
+architecture, where chains of event handlers can be used. This
+allows adding handlers like <code>SSLHandler</code> or
+<code>DelayedWriteHandler</code>, which intercept the
+request/response processing. The following example shows an
+application-level handler based on the <a href="http://xsocket.sourceforge.net/">xSocket</a> framework. The xSocket
+framework supports different handler interfaces that define
+callback methods to be implemented by application-specific
+code.</p>
+<pre><code>
+class POP3ProtocolHandler implements IConnectHandler, IDataHandler, ... {
+  private static final String DELIMITER = ...
+  private Mailbox mailbox = ...
+  
+
+  public static void main(String... args) throws ... {
+    new MultithreadedServer(110, new POP3ProtocolHandler()).run();
+  }
+
+  public boolean onConnect(INonBlockingConnection con) throws ... {
+    if (gatekeeper.isSuspiciousAddress(con.getRemoteAddress())) {
+      con.setWriteTransferRate(5);  // reduce transfer: 5byte/sec
+    }
+
+    con.write("+OK My POP3-Server" + DELIMITER);
+    return true;
+  }
+
+  public boolean onData(INonBlockingConnection con) throws ... {
+    String request = con.readStringByDelimiter(DELIMITER);
+
+    if (request.startsWith("QUIT")) {
+      mailbox.close();
+      con.write("+OK POP3 server signing off" + DELIMITER);
+      con.close();
+
+    } else if (request.startsWith("USER")) {
+      this.user = request.substring(4, request.length());
+      con.write("+OK enter password" + DELIMITER);
+
+
+    } else if (request.startsWith("PASS")) {
+      String pwd = request.substring(4, request.length());
+      boolean isAuthenticated = authenticator.check(user, pwd);
+      if (isAuthenticated) {
+        mailbox = MailBox.openAndLock(user);
+        con.write("+OK mailbox locked and ready" + DELIMITER);
+      } else {
+        ...
+      }  
+    } else if (...) {
+      ...
+    }
+    return true;
+  }
+}</code>
+</pre>
+<p>To ease in accessing the underlying read and write queue, the
+<code>Connection</code> object provides several convenience
+<code>read</code> and <code>write</code> methods for stream- and
+channel-oriented operations.</p>
+<p>By closing the connection, the underlying implementation
+initiates a writeable event round-trip to flush the write queue.
+The connection will be terminated after the remaining data has been
+written. Besides such a controlled termination, connections can be
+disconnected for other reasons. For instance, hardware malfunctions
+could cause the termination of a TCP-based connection. Such a
+situation can only be detected by performing read or write
+operations on the socket, or by idle timeouts. Most NIO frameworks
+provide a built-in function to handle such uncontrolled
+terminations.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>An event-driven non-blocking architecture is a fundamental layer
+to implement highly efficient, scalable, and reliable servers. The
+challenge is to minimize the thread synchronization overhead and to
+optimize the connection/buffer management. This will be the hardest
+part to program.</p>
+<p>But there is no need to reinvent the wheel. Server frameworks
+like xSocket, emberIO, SEDA, or MINA abstract the low-level event
+handling and thread management to ease the creation of highly
+scalable servers. Most of these server frameworks also support
+features like SSL or UDP, which haven't been discussed in this
+article.</p>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+<li>"<a href="http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf">Scalable IO in
+Java</a>" (PDF) describes event-driven processing by using Java NIO</li>
+<li>"<a href="http://weblogs.java.net/blog/jfarcand/archive/2006/06/tricks_and_tips.html">Tricks and Tips with NIO, Part 2: Why <code>SelectionKey.attach()</code> Is
+Evil</a>" describes how a memory leak occurs by a unwary use of the
+SelectionKey's <code>attach</code> method.</li>
+<li>"<a href="http://www.cs.berkeley.edu/%7Ejmacd/cs262.ps">Pico
+Threads: Lightweight Threads in Java</a>" shows the problems with
+large-scale threaded programming and event-based techniques.</li>
+<li>A <a href="http://www.cs.wustl.edu/%7Eschmidt/PDF/reactor-siemens.pdf">Reactor
+pattern</a> description by Douglas C. Schmidt (PDF)</li>
+<li><a href="http://www.aw-bc.com/catalog/academic/product?ISBN=0131411551">Unix
+Network Programming: The Sockets Networking API</a> gives a good
+overview about network programming in general, and gives a good
+impression what happens behind the Java I/O operations on the
+operating-system level.</li>
+<li><a href="http://sourceforge.net/projects/xsocket">xSocket</a> is a
+LGPL NIO-based library to build network applications. Most example
+code of this article has been written based on xSocket.</li>
+</ul>
+
+<p><em><a href="http://today.java.net/pub/au/542">Gregor Roth</a> works as a software architect at United Internet group, a leading European internet service provider.</em></p>
+<div class="pad3x0">
+<table bgcolor="#000000" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td><img src="testfile-Dateien/a.gif" alt=" " border="0" height="1" width="1"></td></tr></tbody></table></div>
+
+<!--  end content  -->
+
+
+
+
+<p>View all <a href="http://today.java.net/pub/q/articles">java.net Articles</a>.</p>
+
+
+<a name="thread"></a>
+
+<div class="feedback">
+<div class="rbox">
+<div class="rboxtop"><div></div></div>
+<div class="rbcontent">
+<b>What do you think of this approach?</b><br>
+<div class="clear"></div>
+<div class="tb_left"><a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_disc/2276&amp;x-lr2=a/350&amp;page="><img src="testfile-Dateien/button_post.gif" alt="Post Comment" border="0" height="20" vspace="4" width="118"></a>
+</div>
+<!--  rbcontent & rbox closed in cs_disc/thread_header.view  -->
+<div class="tb_right">
+
+<a href="http://today.java.net/cs/user/print/a/350?page=last&amp;x-maxdepth=0#thread"><img src="testfile-Dateien/button_main_threads.gif" alt="Full Threads" title="Display main threads only" border="0" hspace="6" vspace="4"></a>
+<a href="http://today.java.net/cs/user/print/a/350?page=last&amp;x-order=date#thread"><img src="testfile-Dateien/button_old.gif" alt="Oldest First" title="Sort oldest posts first" border="0" vspace="4"></a>
+
+</div>
+<div class="clear"></div>
+<!--  closing divs from a/print.view, et al  -->
+
+</div>
+<div class="rboxbot"><div></div></div>
+</div>
+
+
+
+<p>Showing messages 1 through 5 of 5.
+
+</p>
+<ul>
+
+<li>
+<a name="75799"></a>
+<b>Variable visibility</b><br>
+2007-08-03 08:36:56&nbsp;fommil
+
+
+
+[<a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_msg/75799&amp;x-lr2=a/350" title="Reply to this message">Reply</a> | <a href="http://today.java.net/cs/user/view/cs_msg/75799">View</a>] 
+
+<br>
+<br>
+Cool short post... bookmarked for the next time I'm writing a server.
+<p>
+For thread safety on multi-cpu machines you should make the boolean state variable isRunning <code>volatile</code> and the ExecutorService and guard should be <code>final</code>. Otherwise different threads on different cores may see stale values.
+</p><p>
+It may also be more efficient to use a Lock instead of synchronized...
+especially since the above changes would fix any variable visibility
+problems.
+</p><p>Also, is it really safe to simply synchronize on con in
+onReadableEvent, given that there are other operations on con elsewhere
+in the code that will not be synchronized. Maybe it is... I'd have to
+sit down and understand the flow in more detail.
+</p><p>
+Found the link in response to our post on <a href="http://javablog.co.uk/2007/03/29/a-practical-introduction-to-nio/">the Java Blog</a></p><p></p><p></p><p></p></li>
+
+<ul>
+
+<li>
+<a name="76104"></a>
+<b>Variable visibility</b><br>
+2007-08-11 01:33:32&nbsp;grro
+
+
+
+[<a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_msg/76104&amp;x-lr2=a/350" title="Reply to this message">Reply</a> | <a href="http://today.java.net/cs/user/view/cs_msg/76104">View</a>] 
+
+<br>
+<br>First of all, it is a good style to set attributes as final if they
+haven been designed as immutable. I should have done this in my
+examples for attributes like guard or executors. Because the executors
+or the guard object never changes, there wouldn&#8217;t be situations where
+threads will see different values. That means the implementation will
+work as predicted. But the variable isRunning should haven been
+declared as volatile as you mentioned.<br>
+<br>
+I didn&#8217;t see the advantage to use a java.util.concurrent.locks.Lock
+object instead of synchronized in my examples. My intention was to keep
+the examples simple and correct. Using Lock objects depends on the
+concrete implementation. For example if you have to implement
+algorithms like hand-over-hand locking you will use Lock objects.<br>
+<br>
+The idea of synchronizing on con is to <i>avoid concurrent call backs calls</i>
+(performed by the worker threads) for the same connection instance.
+That means other call back methods like onConnect or onIdleTimeout have
+to be synchronized in the same way. By doing this, the call back
+methods will be performed in a serialized manner.<br>
+Synchronizing connection&#8217;s methods like write(&#8230;), readInt() would be another topic.</li>
+
+</ul>
+</ul>
+<ul>
+
+<li>
+<a name="74884"></a>
+<b>Generics</b><br>
+2007-07-16 22:16:47&nbsp;grro
+
+
+
+[<a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_msg/74884&amp;x-lr2=a/350" title="Reply to this message">Reply</a> | <a href="http://today.java.net/cs/user/view/cs_msg/74884">View</a>] 
+
+<br>
+<br>
+please post this question to http://today.java.net/pub/a/today/2007/02/20/WildcardGenericsSQ16.html</li>
+
+</ul>
+<ul>
+
+<li>
+<a name="36267"></a>
+<b>Grizzly Project</b><br>
+2007-02-20 07:41:15&nbsp;huntch
+
+
+
+[<a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_msg/36267&amp;x-lr2=a/350" title="Reply to this message">Reply</a> | <a href="http://today.java.net/cs/user/view/cs_msg/36267">View</a>] 
+
+<br>
+<br>
+Have you looked at Grizzly, https://grizzly.dev.java.net ? It just
+recently went open source. It's very performant and highly scalable.</li>
+
+</ul>
+<ul>
+
+<li>
+<a name="35905"></a>
+<b>Mina is very good</b><br>
+2007-02-13 08:59:45&nbsp;claudio
+
+
+
+[<a href="http://today.java.net/cs/user/create/cs_msg?x-lr=cs_msg/35905&amp;x-lr2=a/350" title="Reply to this message">Reply</a> | <a href="http://today.java.net/cs/user/view/cs_msg/35905">View</a>] 
+
+<br>
+<br>
+I have used Apache MINA last year on a project, to monitor a range of
+servers. What I have to say ? MINA is very well designed and the
+better, good performance.</li>
+
+</ul>
+
+
+</div>
+
+
+<!-- stopindex -->
+
+</td></tr></tbody></table>
+
+<!--  BEGIN VNV5 FOOTER   -->
+<!--  BEGIN VNV5 FOOTER   -->
+<table border="0" cellpadding="0" cellspacing="10" width="100%">
+<tbody><tr>
+<td>
+&nbsp;<a href="http://today.java.net/pub/q/java_net_rss"><img src="testfile-Dateien/feed.png" alt="Feed" align="absmiddle" border="0" height="16" width="16"></a>&nbsp;<a href="http://today.java.net/pub/q/java_net_rss">java.net RSS Feeds</a><br>
+<div class="grayline"></div>
+<table class="vatop" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tbody><tr>
+<td><img src="testfile-Dateien/a.gif" alt=" " border="0" height="1" width="190"><br>
+<a href="http://www.sun.com/"><img src="testfile-Dateien/logo_sun_small.gif" alt=" " border="0" height="29" vspace="5" width="61"></a></td>
+<td valign="top" width="60%">
+<div class="footer">
+<a href="https://java-net.dev.java.net/feedback.html">Feedback</a> &nbsp;|&nbsp;<a href="http://java.net/faq.csp">FAQ</a> &nbsp;|&nbsp;<a href="http://java.net/presscenter/">Press</a>&nbsp;|&nbsp;<a href="http://java.net/terms.csp">Terms of Use</a><br>
+<a href="http://www.sun.com/privacy/">Privacy</a> &nbsp;|&nbsp;
+<a href="http://www.sun.com/suntrademarks/">Trademarks</a>&nbsp;|&nbsp;<a href="https://java-net.dev.java.net/sitemap.html">Site Map</a>
+<br><span class="sp5">&nbsp;</span><br>
+Your use of this web site or any of its content or software indicates your agreement to be bound by these <a href="http://java.net/terms.csp">Terms of Participation</a>.<br>
+<span class="sp5">&nbsp;</span><br>
+Copyright © 1995-2007 Sun Microsystems, Inc.
+</div></td>
+<td align="right" valign="top" width="40%"><div class="footer">
+<a href="http://www.oreilly.com/"><img src="testfile-Dateien/montague_logo_oreilly.gif" alt="Oreilly Logo" border="0" height="19" width="74"></a><a href="http://www.collab.net/"><img src="testfile-Dateien/montague_logo_collabnet.gif" alt="Collabnet Logo" border="0" height="19" width="85"></a><br>
+Powered by Sun Microsystems, Inc.,<br> O'Reilly and CollabNet
+</div></td></tr>
+<!--  <tr><td colspan="3" valign="top" class="grey3"><img src="/im/a.gif" width="1" height="2" border="0" alt=" " /></td></tr>  -->
+</tbody></table>
+<div class="grayline"></div>
+</td></tr>
+</tbody></table>
+<!--  END VNV5 FOOTER  -->
+
+<!--  Begin SiteCatalyst code  -->
+<script language="JavaScript" src="testfile-Dateien/s_code_remote.js"></script><img src="testfile-Dateien/s68345139796918.gif" name="s_i_sunjnet" alt="" border="0" height="1" width="1">
+<!--  End SiteCatalyst code  --></div></body></html>

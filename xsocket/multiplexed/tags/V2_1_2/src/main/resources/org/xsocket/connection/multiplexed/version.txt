@@ -1,0 +1,3 @@
+Implementation-Version=2.1.2 
+Implementation-Date=2009-01-26 18:56 CET 
+Dependency.xSocket.Implementation-Version=[2.4-SNAPSHOT, 2.5)

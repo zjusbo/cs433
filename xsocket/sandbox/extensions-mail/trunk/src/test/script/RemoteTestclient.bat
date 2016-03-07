@@ -1,0 +1,1 @@
+java -cp ../../../bin -Djava.util.logging.config.file=../java/logging.properties org.xsocket.server.SmtpTestClient 192.168.1.89 %1 %2

@@ -1,0 +1,8 @@
+Listen 6789
+ThreadPoolSize 8
+CacheSize 8096
+
+<VirtualHost *:6789>
+  DocumentRoot  ./
+  ServerName server.com
+<VirtualHost>  

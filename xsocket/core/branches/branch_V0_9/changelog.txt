@@ -1,0 +1,38 @@
+xSocket - Changelog
+===================
+
+
+
+Release 0.9.0-beta-1
+--------------------
+a, New features:
+  - read and write methods has been added for the connection interfaces
+  - server-side ssl support has been added 
+  - ant-build has been replaced with maven-build
+    
+b, Bug fix/Implementation changes:
+  - BlockingConnection: receive methods in BlockingConnection has been fixed
+  - Chain: If the handler raises a exception within the chain, the same handler will be recalled in a loop
+  - ByteBufferQueue: Fix wrong terminator detection
+
+
+
+Release 0.8.0
+-------------
+a, New features:
+  - nonen
+    
+b, Bug fix/Implementation changes:
+  - Improved error and debug output handling for AbstractConnection and Chain
+  - some bug fixes
+
+
+Release 0.8.alpha2
+------------------
+a, New features:
+ - First public release
+
+b, Bug fix/Implementation changes:
+
+
+
