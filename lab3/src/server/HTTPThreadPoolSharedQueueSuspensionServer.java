@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
+import asyncServer.Debug;
+
 public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	private ServerConfig config;
 	private ServerSocket welcomeSocket;
@@ -69,8 +71,8 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 			        }
 				    // remove the first request
 				    s = (Socket) connSockPool.remove(0); 
-				    System.out.println("Thread " + this 
-						       + " process request " + s);
+				    Debug.DEBUG("Thread " + this 
+						       + " process request " + s, 3);
 			    } // end if
 			     // end of sync
 		         // end while

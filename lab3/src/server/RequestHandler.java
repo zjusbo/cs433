@@ -31,22 +31,30 @@ public class RequestHandler {
 	}
 
 	public static void HandleConnectionSocket(Socket connectionSocket) throws IOException {
-		byte[] b_buf = new byte[2000];
-		int length;
-
-		length = connectionSocket.getInputStream().read(b_buf);
-		byte[] b_content = Arrays.copyOfRange(b_buf, 0, length);
-		String s_request = new String(b_content, StandardCharsets.US_ASCII);
+		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+//		length = connectionSocket.getInputStream().read(b_buf);
+//		byte[] b_content = Arrays.copyOfRange(b_buf, 0, length);
+//		String s_request = new String(b_content, StandardCharsets.US_ASCII);
+		String line;
+		StringBuilder sb = new StringBuilder();
+		while((line = inFromClient.readLine()) != null){
+			sb.append(line);
+			sb.append("\r\n"); // append CRLF
+			// end of request
+			if(line.trim().equals("\r\n")){
+				break;
+			}
+		}
 		/*
 		 * while (inFromClient.ready()) { clientSentence =
 		 * inFromClient.readLine(); System.out.println(clientSentence);
 		 * s_request += clientSentence + "\n"; }
 		 */
-		HTTPRequest request = HTTPRequest.parse(s_request);
+		HTTPRequest request = HTTPRequest.parse(sb.toString());
 		// process input
 		if (request == null) {
 			System.err.println("request format error.");
-			System.out.println(s_request);
+			System.out.println(sb);
 			connectionSocket.close();
 			return;
 		}
@@ -97,7 +105,7 @@ public class RequestHandler {
 		// if file_path executable?
 		
 		if (file_path.endsWith(".cgi")) {
-			Debug.DEBUG("Start cgi program..");
+			Debug.DEBUG("Start cgi program..", 3);
 			ProcessBuilder pb = new ProcessBuilder("python", file_path);
 			Map<String, String> env = pb.environment();
 			// env.put("INDEX", Integer.toString(reqCount));
@@ -136,25 +144,20 @@ public class RequestHandler {
 								+ (double) (file_path.length() + file_content.length) / 1024;
 						// cache not full
 						if (cache_size < Integer.valueOf(config.cacheSize)) {
-							Debug.DEBUG("update cache: " + cache_size + " kB, max = " + Integer.valueOf(config.cacheSize) + " kB");
+							Debug.DEBUG("update cache: " + cache_size + " kB, max = " + Integer.valueOf(config.cacheSize) + " kB", 2);
 							cache.put(file_path, file_content);
 							RequestHandler.cache_curr_size = cache_size;
 						}else{
-							Debug.DEBUG("Cache is full");
+							Debug.DEBUG("Cache is full", 2);
 						}
 					}
-				}else{
-					Debug.DEBUG("file: " + file_path + " does not exist");
 				}
-
 			}
 		}
-
 		// file not found
 		if (file_content == null){
 			return new HTTPResponse(404);
 		}
-		Debug.DEBUG("gen 200 response");
 		return new HTTPResponse(200, file_content);
 	}
 
@@ -175,7 +178,7 @@ public class RequestHandler {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			// file do not exist
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
