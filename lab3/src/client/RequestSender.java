@@ -54,11 +54,12 @@ public class RequestSender implements Runnable{
 					print("Sending request: " + req.getURL() + " to " + socket.getInetAddress().getHostName(), 1);
 					DataOutputStream outToServer 
 					   = new DataOutputStream(socket.getOutputStream());
+					print(req, 2);
 					outToServer.write(req.getBytes());
 					// socket shutdown output
 					socket.shutdownOutput();
 					long startTime = System.currentTimeMillis();
-					print(req, 2);
+					
 					// recv response
 					// create read stream and receive from server
 					print("Recieving response from: " + socket.getInetAddress(), 1);
