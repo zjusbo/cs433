@@ -96,7 +96,7 @@ public class SHTTPTestClient {
 		String s;
 		s = "Performance:\n";
 		s += "\tTransaction throughput: " + transaction_throughput + " files/s\n";
-		s += "\tData throughput: " + data_throughput + " bytes/s\n";
+		s += "\tData throughput: " + data_throughput / 1024 + " kB/s\n";
 		s += "\tAvg response time: " + avg_response_time + " ms"; 
 		return s;
 	}

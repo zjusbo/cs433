@@ -1,1 +1,0 @@
-java -cp ../../../bin;../../../../xsocket_core/bin org.xsocket.server.handler.smtp.RunnableBulkSmtpClient %1 %2 %3

@@ -1,1 +1,0 @@
-java -cp ../../../bin org.xsocket.server.handler.servlet.http.RunnableHttpServer 8080

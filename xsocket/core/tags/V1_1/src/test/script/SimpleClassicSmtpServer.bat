@@ -1,1 +1,0 @@
-java -cp ../../../bin org.xsocket.server.RunnableClassicSimpleSmtpServer %1

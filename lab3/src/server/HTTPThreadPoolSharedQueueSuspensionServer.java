@@ -30,8 +30,8 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	        try {
 		        // accept connection from connection queue
 		        Socket connSock = welcomeSocket.accept();
-		        System.out.println("Main thread retrieve connection from " 
-				                   + connSock);
+		        //System.out.println("Main thread retrieve connection from " 
+				//                   + connSock);
 
 		        // how to assign to an idle thread?
 		        synchronized (connSockPool) {
@@ -57,7 +57,7 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	    	
 		    while (true) {
 		        // get a new request connection
-		        Socket s;
+		        Socket s = null;
 			    synchronized (connSockPool) {
 		        	while (connSockPool.isEmpty()) {
 			            try {
@@ -75,7 +75,8 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 			     // end of sync
 		         // end while
 		        try {
-					RequestHandler.HandleConnectionSocket(s);
+		        	if(s != null)
+		        		RequestHandler.HandleConnectionSocket(s);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

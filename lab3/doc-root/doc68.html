@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0050)http://zoo.cs.yale.edu/classes/cs433/Schedule.html -->
+  <title>Programming assignment 1</title>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta content="Microsoft FrontPage 12.0" name="GENERATOR">
+  <meta content="Ion Stoica" name="Author">
+  <meta content="Microsoft FrontPage 4.0" name="GENERATOR">
+<style type="text/css">
+.style1 {
+	color: #FF0000;
+}
+</style>
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<h3 align="left">Small Test file</h3>
+<p align="left">In class we covered multiple approaches to implement a Web 
+server: sequential (name it SeqWebServer), multi-thread (name it MtWebServer), and asynchronous i/o 
+(name it AsyncWebServer).
+The program below is a skeleton sequential web server: </p>
+<ul>
+  <li>
+    <p align="left"><a href="java/WebServer.java">WebServer.java</a></p>
+  </li>
+	<li>
+    <p align="left"><a href="java/WebRequestHandler.java">WebRequestHandler.java</a></p>
+  </li>
+</ul>
+<p align="left">In this assignment, you will implement all three approaches and 
+compare their performance. <br><br>For all three approaches, your server must 
+support HTTP 1.0 (http://www.w3.org/Protocols/HTTP/1.0/spec.html) GET and POST 
+methods. The command-line syntax should allow specification of at least 
+listening port and www_root.&nbsp; The server must send the Last-Modified header 
+and understand If-Modified-Since from client. </p>
+<p align="left">If the request is for www-root without specifying a file name, 
+it should return index.html if exists; otherwise it will return Not found. If 
+the request is for www-root without specifying a file name and the User-Agent 
+header indicates that the request is from a mobile handset (e.g., it should at 
+least detect iphone by detecting iPhone in the User-agent string),&nbsp; it 
+should return index_m.html. <br><br>Some specific requirements for the 
+multi-thread and async i/o versions:</p>
+<ul>
+	<li>
+	<p align="left">For the multi-thread version, you should be able to specify 
+	a limit on the maximal number of concurrent threads: -thmax &lt;max_num_current_threads&gt;.</p>
+	</li>
+	<li>
+	<p align="left">For the async i/o version, we covered an example
+	<a href="java/EchoServer.java">EchoServer.java</a>. You can use the code as 
+	a starting point. Your server should use ByteBuffer to read HTTP request and 
+	write HTTP response. For details about ByteBuffer, please read chapter 12 of 
+	Java Network Programming.</p>
+	<p align="left">Suggestion 1: During your design, think how you 
+		implement a finite state machine to handle each request (e.g., initial 
+	state after accepting a connection, what other states).<br><br>Suggestion 2: 
+	Java async io does not allow you to select events on a file channel. See
+	<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/nio/channels/spi/AbstractSelectableChannel.html">
+	this link</a> for a list of selectable channels. There are can be multiple 
+	design options to handle file i/o:</p>
+	<ul>
+		<li>
+		<p align="left">Use standard file i/o by assuming that file system is 
+		fast and will not become bottleneck;</p>
+		</li>
+		<li><span LANG="EN">
+		<p>Try out mapped file i/o: <br><span LANG="EN">FileInputStream </span>
+		<font SIZE="2">
+		fin = new FileInputStream(args[0]);<br>FileChannel in = 
+fin.getChannel();<br>ByteBuffer input = in.map(FileChannel.MapMode.READ_ONLY, 0, 
+in.size());</p>
+</font></span></li>
+		<li><span LANG="EN"><font SIZE="3">
+		<p>Try out direct transfer: See FileChannel.transferTo;</p>
+</font></span></li>
+		<li><span LANG="EN"><font SIZE="3">
+		<p>Use standard file i/o and use a thread pool to help with reading 
+		files.</p>
+</font></span></li>
+	</ul>
+	</li>
+</ul>
+<h4 align="left">Part 2.2 Testing</h4>
+<p align="left">We will use <a
+ href="http://www.acme.com/software/http_load/">http_load</a>
+(http://www.acme.com/software/http_load/) to test the performance of
+the servers. All related files are under
+/home/httpd/html/zoo/classes/cs433/assignments/prog1/<br>
+</p>
+<p align="left">For this part of the assignment, you need to be able to
+do the following:<br>
+</p>
+<ul>
+  <li>Use /home/httpd/html/zoo/classes/cs433/assignments/prog1/www as the www root<br>
+    <br>
+  </li>
+  <li>Make sure to set the www root of the three web servers so that a user can 
+  retrieve files under the www root.
+For example, if I am running a web server on
+cicada.cs.yale.edu at port 9876, and I want to retrieve&nbsp;
+/home/httpd/html/zoo/classes/cs433/assignments/prog1/www/html-small/doc1.html<br>
+I can type into my browser:<br>
+http://cicada.cs.yale.edu:9876/html-small/doc1.html<br>
+    <br>
+If I type an URL that does not map into an invalid file name, please
+return Error and code 404.<br><br>
+  <li>Test the performance of the servers using http_load. You may find
+    <a
+ href="http://ez.no/developer/articles/ez_publish_performance_optimization_part_1_of_3_introduction_and_benchmarking/performance_testing_with_http_load">this
+    </a>document helpful. We have installed http_load under
+/home/httpd/html/zoo/classes/cs433/assignments/prog1/http_load/<br>
+An example url file is called urls.txt in the directory.<br>
+    <br>
+For the test, you will need to vary the parallel from 1 to 250 (or more
+until your server saturates)
+with a reasonable increment schedule (e.g., 1, 2, 3, 4, 5, 10, 15, 20,
+25, 30, 35, 40, 45, 50, 60, 70, ...). A reasonable test time is 60 to
+120 seconds.<br>
+    <br>
+Please conduct two test cases:</li>
+  <ul>
+    <li>All small html files. For this case, please use the 1000 files
+under
+/home/httpd/html/zoo/classes/cs433/assignments/prog1/www/html-small/</li>
+    <li>A mix of small, big and jpg files: For this case, please use
+the first 500 files from html-small, the 100 files from html-big, and
+the 100 jpg files from jpg.<br>
+    </li>
+  </ul>
+  </ul>
+<h4>Part 2.3 Report</h4>
+<ul>
+    <li>You should submit a report on your server design.
+	<ul>
+		<li>For your async i/o version, please (1) describe in what sense your 
+		server implements a finite state machine to handle each request; (2) how 
+		do you handle file i/o.</li>
+	</ul>
+	</li>
+	<ul>
+		<li>Please report the measured performance for performance metrics:
+throughput and (mean) delay. <span class="line">The sample figure
+below may
+give you a sense of the
+testing results for throughput. Please add one optimization feature of your 
+		choice to speedup a server and
+validate the
+optimization. Thus, your results should contain at least four curves:
+one curve for each given server, and one for your optimization.</span>
+You may want to conduct a test using the department server
+(http://zoo.cs.yale.edu) and compare the performance. Please discuss
+the
+lessons learned. </li>
+		<li>The TA will benchmark all servers and pick the one with the highest 
+		throughput. This server will receive a bonus of 25%.</li>
+	</ul>
+</ul>
+<b>Submission</b></h3>
+<ul>
+  <li><b>Please submit using class server. Please include README to tell the TA 
+  the directory structure, e.g., which file is the report, which directory is 
+  part 1. Please generate a
+single jar file containing all of your files. The name of the jar file
+should be prog1.&lt;netid&gt;.jar. If you want to update, please rename
+it prog1A.&lt;netid&gt;.jar, etc. </b></li>
+</ul>
+<p align="right"><i>Last Update:
+<!--webbot bot="Timestamp" s-type="REGENERATED" s-format="%B %d, %Y %I:%M:%S %p %Z" startspan -->October 05, 2009 01:03:41 PM -0400<!--webbot bot="Timestamp" endspan i-checksum="57540" --></i></p>
+</body>
+</html>

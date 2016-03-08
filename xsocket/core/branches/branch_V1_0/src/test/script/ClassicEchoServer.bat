@@ -1,1 +1,0 @@
-java -cp ../../../bin org.xsocket.server.RunnableClassicEchoServer %1 %2

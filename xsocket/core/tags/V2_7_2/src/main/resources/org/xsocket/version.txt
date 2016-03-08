@@ -1,3 +1,0 @@
-Implementation-Version=2.7.2
-									
-Implementation-Date=2009-11-16 09:37 MEZ

@@ -1,1 +1,0 @@
-java -cp ../../../bin -Djava.util.logging.config.file=../test/java/logging.properties org.xsocket.server.smtp.PseudoSender 172.17.72.245 7743 30

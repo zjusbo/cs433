@@ -1,20 +1,25 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
+import asyncServer.Debug;
 import utility.HTTPRequest;
 import utility.HTTPResponse;
 
 public class RequestHandler {
 	static private ServerConfig config;
-	static private HashMap<String, byte[]> cache;
-	static private Double cache_curr_size;
+	static private HashMap<String, byte[]> cache = new HashMap<String, byte[]>();
+	static private Double cache_curr_size = new Double(0);
 
 	/**
 	 * TODO: Understand header - If-Modified-Since - User-Agent Sender Header: -
@@ -23,14 +28,6 @@ public class RequestHandler {
 	 **/
 	public static void setConfig(ServerConfig config) {
 		RequestHandler.config = config;
-	}
-
-	public static void setCache(HashMap<String, byte[]> cache) {
-		RequestHandler.cache = cache;
-	}
-
-	public static void setCachesize(Double size) {
-		RequestHandler.cache_curr_size = size;
 	}
 
 	public static void HandleConnectionSocket(Socket connectionSocket) throws IOException {
@@ -63,9 +60,11 @@ public class RequestHandler {
 		// send reply
 		// System.out.println(response);
 		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-		outToClient.writeBytes(response.toString());
+		Debug.DEBUG("writing response length: " + response.getBytes().length + " bytes to socket");
+		//outToClient.writeBytes(response.toString());
+		outToClient.write(response.getBytes());
+		Debug.DEBUG("close socket");
 		connectionSocket.close();
-
 	}
 
 	public static HTTPResponse getResponse(HTTPRequest request) {
@@ -93,22 +92,43 @@ public class RequestHandler {
 		}
 
 		String file_path = rootDocument + "/" + url;
-		byte[] file_content;
-		/**
-		 * TODO Support Since-last-modify header
-		 **/
-		// no cache
-		if (cache == null) {
-			file_content = readFile(file_path);
+
+		byte[] file_content = null;
+		// if file_path executable?
+		
+		if (file_path.endsWith(".cgi")) {
+			Debug.DEBUG("Start cgi program..");
+			ProcessBuilder pb = new ProcessBuilder("python", file_path);
+			Map<String, String> env = pb.environment();
+			// env.put("INDEX", Integer.toString(reqCount));
+			pb.redirectOutput(Redirect.PIPE);
+			Process p;
+			try {
+				p = pb.start();
+
+				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				StringBuilder out = new StringBuilder();
+				String line;
+				while ((line = br.readLine()) != null) {
+					out.append(line);
+				}
+				file_content = out.toString().getBytes();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
+			// regular file
 			// read from cache
 			synchronized (cache) {
 				file_content = cache.get(file_path);
+				if(file_content != null)
+					Debug.DEBUG("cache hit: " + file_path, 2);
 			}
 			// read from disk, update cache if cachesize is not reached
 			if (file_content == null) {
 				file_content = readFile(file_path);
-				// file not found
+				// file found
 				if (file_content != null) {
 					// thread safe, modify cache_size and cache
 					synchronized (cache) {
@@ -116,20 +136,33 @@ public class RequestHandler {
 								+ (double) (file_path.length() + file_content.length) / 1024;
 						// cache not full
 						if (cache_size < Integer.valueOf(config.cacheSize)) {
+							Debug.DEBUG("update cache: " + cache_size + " kB, max = " + Integer.valueOf(config.cacheSize) + " kB");
 							cache.put(file_path, file_content);
 							RequestHandler.cache_curr_size = cache_size;
+						}else{
+							Debug.DEBUG("Cache is full");
 						}
 					}
+				}else{
+					Debug.DEBUG("file: " + file_path + " does not exist");
 				}
 
 			}
 		}
+
 		// file not found
-		if (file_content == null) {
+		if (file_content == null){
 			return new HTTPResponse(404);
 		}
+		Debug.DEBUG("gen 200 response");
 		return new HTTPResponse(200, file_content);
 	}
+
+	// ------ //
+
+	/**
+	 * TODO Support Since-last-modify header
+	 **/
 
 	private static byte[] readFile(String path) {
 		try {
@@ -142,7 +175,7 @@ public class RequestHandler {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			// file do not exist
-			// e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}

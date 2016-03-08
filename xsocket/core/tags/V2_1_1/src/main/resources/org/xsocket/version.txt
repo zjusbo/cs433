@@ -1,2 +1,0 @@
-Implementation-Version=2.1.1 
-Implementation-Date=2008-08-07 19:36 CEST

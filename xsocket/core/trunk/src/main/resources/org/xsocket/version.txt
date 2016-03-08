@@ -1,3 +1,0 @@
-Implementation-Version=2.8.14-SNAPSHOT
-									
-Implementation-Date=2010-09-21 07:49 MESZ

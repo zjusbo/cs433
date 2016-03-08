@@ -1,3 +1,0 @@
-Implementation-Version=2.6.6-SNAPSHOT
-									
-Implementation-Date=2009-10-11 10:48 MESZ

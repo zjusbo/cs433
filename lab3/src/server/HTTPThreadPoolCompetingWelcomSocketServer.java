@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import asyncServer.Debug;
+
 public class HTTPThreadPoolCompetingWelcomSocketServer implements HTTPServer {
 	ServerConfig config;
 	ServerSocket welcomeSocket;
@@ -44,6 +46,7 @@ public class HTTPThreadPoolCompetingWelcomSocketServer implements HTTPServer {
 			while (true) {
 				synchronized (welcomeSocket) {
 					try {
+						Debug.DEBUG("waiting for new connection");
 						Socket connectionSocket = welcomeSocket.accept();
 						RequestHandler.HandleConnectionSocket(connectionSocket);
 					} catch (IOException e) {

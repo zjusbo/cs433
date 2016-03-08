@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import asyncServer.Debug;
+
 public class HTTPResponse {
 	static final String protocol = "HTTP/1.0";
 	static final String CRLF = "\r\n";
@@ -72,6 +74,7 @@ public class HTTPResponse {
 		if(this.file_content != null){
 			s += new String(this.file_content, StandardCharsets.US_ASCII); // will here be a bug?
 		}
+		//Debug.DEBUG(s);
 		return s;
 	}
 	
