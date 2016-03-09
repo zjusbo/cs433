@@ -59,8 +59,8 @@ public class HTTPThreadPoolSharedQueueBusyWaitServer implements HTTPServer {
 			            if (!connSockPool.isEmpty()) {
 				           // remove the first request
 				           s = (Socket) connSockPool.remove(0); 
-				           System.out.println("Thread " + this 
-						       + " process request " + s);
+	//			           System.out.println("Thread " + this 
+	//					       + " process request " + s);
 			            } // end if
 			        } // end of sync
 		        } // end while
