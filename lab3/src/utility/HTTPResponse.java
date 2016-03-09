@@ -62,7 +62,7 @@ public class HTTPResponse {
 	}
 	@Override
 	public String toString(){
-		String s = new String();
+		String s;
 		String message = HTTPResponse.m_message.get(this.statusCode);
 		s = HTTPResponse.protocol + " " + this.statusCode + " " + message + HTTPResponse.CRLF;
 		for(String label : field_labels){

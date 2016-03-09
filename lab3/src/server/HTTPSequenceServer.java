@@ -2,7 +2,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import utility.Debug;
 public class HTTPSequenceServer implements HTTPServer {
 	private ServerConfig config;
 	public HTTPSequenceServer(ServerConfig config) {
@@ -17,7 +17,7 @@ public class HTTPSequenceServer implements HTTPServer {
 		while (true) {
 			// accept connection from connection queue
 			Socket connectionSocket = welcomeSocket.accept();
-			//System.out.println("accepted connection from " + connectionSocket);
+			Debug.DEBUG("accepted connection from " + connectionSocket, 2);
 			RequestHandler.HandleConnectionSocket(connectionSocket);
 		} // end of while (true)
 		

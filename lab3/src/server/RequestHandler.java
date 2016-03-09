@@ -67,7 +67,7 @@ public class RequestHandler {
 			return;
 		}
 		// send reply
-		// System.out.println(response);
+		Debug.DEBUG(response, 3);
 		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 	//	Debug.DEBUG("writing response length: " + response.getBytes().length + " bytes to socket");
 		//outToClient.writeBytes(response.toString());

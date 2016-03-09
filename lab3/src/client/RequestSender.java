@@ -74,7 +74,6 @@ public class RequestSender implements Runnable{
 					// parse header
 					while(sentenceFromServer != null){
 						recv_byte_num += sentenceFromServer.length();
-						sentenceFromServer = inFromServer.readLine();
 						String[] tokens = sentenceFromServer.split("\\s+");
 						if(tokens[0].toLowerCase().equals("content-length:")){
 							content_length = Integer.valueOf(tokens[1]);
@@ -83,6 +82,7 @@ public class RequestSender implements Runnable{
 						if(sentenceFromServer.equals("")){ // "\r\n"
 							break; // header is end
 						}
+						sentenceFromServer = inFromServer.readLine();
 					}
 
 					// parse body, is exist
