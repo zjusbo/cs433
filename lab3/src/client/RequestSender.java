@@ -57,6 +57,7 @@ public class RequestSender implements Runnable{
 					print(req, 2);
 					outToServer.write(req.getBytes());
 					// socket shutdown output
+					outToServer.flush();
 					socket.shutdownOutput();
 					long startTime = System.currentTimeMillis();
 					
