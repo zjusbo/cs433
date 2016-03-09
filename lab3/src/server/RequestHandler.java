@@ -71,6 +71,7 @@ public class RequestHandler {
 		Debug.DEBUG("writing response length: " + response.getBytes().length + " bytes to socket");
 		//outToClient.writeBytes(response.toString());
 		outToClient.write(response.getBytes());
+		outToClient.flush();
 		Debug.DEBUG("close socket");
 		connectionSocket.close();
 	}
