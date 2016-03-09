@@ -70,8 +70,8 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 			        }
 				    // remove the first request
 				    s = (Socket) connSockPool.remove(0); 
-				    Debug.DEBUG("Thread " + this 
-						       + " process request " + s, 3);
+//				    Debug.DEBUG("Thread " + this 
+//						       + " process request " + s, 3);
 			    } // end if
 			     // end of sync
 		         // end while

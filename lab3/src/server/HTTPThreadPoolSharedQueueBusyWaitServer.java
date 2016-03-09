@@ -29,8 +29,8 @@ public class HTTPThreadPoolSharedQueueBusyWaitServer implements HTTPServer {
 	        try {
 		        // accept connection from connection queue
 		        Socket connSock = welcomeSocket.accept();
-		        System.out.println("Main thread retrieve connection from " 
-				                   + connSock);
+		        //System.out.println("Main thread retrieve connection from " 
+				//                   + connSock);
 		        // how to assign to an idle thread?
 		        synchronized (connSockPool) {
 		            connSockPool.add(connSock);
