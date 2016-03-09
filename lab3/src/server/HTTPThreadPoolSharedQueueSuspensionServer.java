@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Vector;
 
-import asyncServer.Debug;
+import utility.Debug;
 
 public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	private ServerConfig config;
