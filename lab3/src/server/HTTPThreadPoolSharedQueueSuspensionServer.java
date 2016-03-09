@@ -43,8 +43,7 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	        } catch (Exception e) {
 	        	System.out.println("server run failed.");
 	        } // end of catch
-	    } // end of loop
-		
+	    } // end of loop	
 	}
 	class ServiceThread extends Thread {
 		List<Socket> connSockPool;

@@ -41,7 +41,8 @@ public class RequestHandler {
 			sb.append(line);
 			sb.append("\r\n"); // append CRLF
 			// end of request
-			if(line.trim().equals("\r\n")){
+			if(line.trim().equals("")){
+				//System.out.println("End of request detected.");
 				break;
 			}
 		}
@@ -71,7 +72,7 @@ public class RequestHandler {
 		Debug.DEBUG("writing response length: " + response.getBytes().length + " bytes to socket");
 		//outToClient.writeBytes(response.toString());
 		outToClient.write(response.getBytes());
-		outToClient.flush();
+		//outToClient.flush();
 		Debug.DEBUG("close socket");
 		connectionSocket.close();
 	}

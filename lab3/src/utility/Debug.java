@@ -2,7 +2,7 @@ package utility;
 public class Debug {
 
     private static boolean DEBUG = true;
-    private static int level = 1; // verbose level
+    private static int level = 0; // verbose level
     
     public static void DEBUG(String s, int level) {
     	if (DEBUG && level <= Debug.level)

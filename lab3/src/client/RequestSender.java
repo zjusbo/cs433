@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import utility.Debug;
 import utility.HTTPRequest;
 import utility.PerformanceData;
 import utility.SocketFactory;
@@ -57,8 +58,8 @@ public class RequestSender implements Runnable{
 					print(req, 2);
 					outToServer.write(req.getBytes());
 					// socket shutdown output
-					outToServer.flush();
-					socket.shutdownOutput();
+//					outToServer.flush();
+					//socket.shutdownOutput();
 					long startTime = System.currentTimeMillis();
 					
 					// recv response
@@ -79,16 +80,18 @@ public class RequestSender implements Runnable{
 							content_length = Integer.valueOf(tokens[1]);
 						}
 						print(sentenceFromServer, 2);
-						if(sentenceFromServer.equals("\r\n")){
+						if(sentenceFromServer.equals("")){ // "\r\n"
 							break; // header is end
 						}
 					}
-					
+
 					// parse body, is exist
-					if(content_length > 0){
-						byte[] body = new byte[content_length];
-						int body_length = socket.getInputStream().read(body);
-						recv_byte_num += body_length;
+					int ch;
+					while(content_length > 0){
+						//Debug.DEBUG("Content-length = " + content_length);
+						ch = inFromServer.read();
+						recv_byte_num += 1;
+						content_length -= 1;
 					}
 					print("Response time: " + responseTime, 1);
 					print("Recv bytes: " + recv_byte_num, 1);
