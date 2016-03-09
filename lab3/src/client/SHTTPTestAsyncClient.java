@@ -9,7 +9,7 @@ import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import asyncServer.Debug;
+import utility.Debug;
 import utility.HTTPRequest;
 
 public class SHTTPTestAsyncClient {

@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import asyncServer.Debug;
-
 public class HTTPResponse {
 	static final String protocol = "HTTP/1.0";
 	static final String CRLF = "\r\n";

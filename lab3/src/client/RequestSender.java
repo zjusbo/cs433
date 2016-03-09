@@ -68,10 +68,26 @@ public class RequestSender implements Runnable{
 					String sentenceFromServer = inFromServer.readLine();
 					long responseTime = System.currentTimeMillis() - startTime;
 					// read recv line by line
+					int content_length = 0;
+					// parse header
 					while(sentenceFromServer != null){
 						recv_byte_num += sentenceFromServer.length();
 						sentenceFromServer = inFromServer.readLine();
+						String[] tokens = sentenceFromServer.split("\\s+");
+						if(tokens[0].toLowerCase().equals("content-length:")){
+							content_length = Integer.valueOf(tokens[1]);
+						}
 						print(sentenceFromServer, 2);
+						if(sentenceFromServer.equals("\r\n")){
+							break; // header is end
+						}
+					}
+					
+					// parse body, is exist
+					if(content_length > 0){
+						byte[] body = new byte[content_length];
+						int body_length = socket.getInputStream().read(body);
+						recv_byte_num += body_length;
 					}
 					print("Response time: " + responseTime, 1);
 					print("Recv bytes: " + recv_byte_num, 1);

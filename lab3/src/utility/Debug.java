@@ -1,4 +1,4 @@
-package asyncServer;
+package utility;
 public class Debug {
 
     private static boolean DEBUG = true;
