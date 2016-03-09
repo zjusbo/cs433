@@ -17,7 +17,7 @@ public class HTTPSequenceServer implements HTTPServer {
 		while (true) {
 			// accept connection from connection queue
 			Socket connectionSocket = welcomeSocket.accept();
-			System.out.println("accepted connection from " + connectionSocket);
+			//System.out.println("accepted connection from " + connectionSocket);
 			RequestHandler.HandleConnectionSocket(connectionSocket);
 		} // end of while (true)
 		

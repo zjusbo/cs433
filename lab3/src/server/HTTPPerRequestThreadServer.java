@@ -22,7 +22,7 @@ public class HTTPPerRequestThreadServer implements HTTPServer {
 		while (true) {
 			// accept connection from connection queue
 			Socket connectionSocket = welcomeSocket.accept();
-			System.out.println("accepted connection from " + connectionSocket);
+			//System.out.println("accepted connection from " + connectionSocket);
 			Thread t = new Thread(new ConnectionSocketHandler(connectionSocket));
 			t.start();
 		} // end of while (true)

@@ -46,7 +46,7 @@ public class HTTPThreadPoolCompetingWelcomSocketServer implements HTTPServer {
 			while (true) {
 				synchronized (welcomeSocket) {
 					try {
-						Debug.DEBUG("waiting for new connection");
+						//Debug.DEBUG("waiting for new connection");
 						Socket connectionSocket = welcomeSocket.accept();
 						RequestHandler.HandleConnectionSocket(connectionSocket);
 					} catch (IOException e) {
