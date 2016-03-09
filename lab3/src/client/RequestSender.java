@@ -1,8 +1,8 @@
 package client;
 
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,43 +12,48 @@ import utility.HTTPRequest;
 import utility.PerformanceData;
 import utility.SocketFactory;
 
-public class RequestSender implements Runnable{
+public class RequestSender implements Runnable {
 	private SocketFactory clientSocketFactory;
 	private int pid;
 	private PerformanceData performanceData;
 	private int verbose = 0;
 	private volatile Thread thisThread;
 	private ArrayList<HTTPRequest> requestList;
-	public RequestSender(int pid, SocketFactory clientSocketFactory, ArrayList<HTTPRequest> requestList, PerformanceData pd){
+
+	public RequestSender(int pid, SocketFactory clientSocketFactory, ArrayList<HTTPRequest> requestList,
+			PerformanceData pd) {
 		this.pid = pid;
 		this.clientSocketFactory = clientSocketFactory;
 		this.requestList = requestList;
 		this.performanceData = pd;
 	}
-	public void setVerbose(int v){
+
+	public void setVerbose(int v) {
 		this.verbose = v;
 	}
-	
+
 	// stop current thread
-	public void stop(){
+	public void stop() {
 		Thread thread = this.thisThread;
 		this.thisThread = null;
 		// wake up from blocking operation
-		if(thread != null)
+		if (thread != null)
 			thread.interrupt();
 	}
+
 	public void run(){
 		long total_recv_byte_num = 0;
 		long total_recv_packet_num = 0;
 		long total_response_milli_seconds = 0;
 		this.thisThread = Thread.currentThread();
-		
-		try{
+		Socket socket = null;
+	
 			// while current thread still need to run
 			while(this.thisThread != null){				
 				for(HTTPRequest req : this.requestList){
+					try{
 					if(this.thisThread == null) break; // stop running
-					Socket socket = this.clientSocketFactory.getSocket();
+					socket = this.clientSocketFactory.getSocket();
 					//Thread.sleep(1000 * 10);
 					long recv_byte_num = 0;
 					// write to server
@@ -99,23 +104,31 @@ public class RequestSender implements Runnable{
 					total_recv_packet_num++;
 					total_response_milli_seconds += responseTime;
 					socket.close();
+					}catch(Exception e){
+						try {
+							socket.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						System.err.println("Error message");
+						System.err.println(e.getStackTrace());
+						System.err.println(e.getMessage());
 				}
 			}
-		}catch(Exception e){
-			System.err.println(e.getStackTrace());
-			
-		}finally{
-			
+		}
+		
 			// collect data and return
 			synchronized(this.performanceData){
 				this.performanceData.num_bytes += total_recv_byte_num;
 				this.performanceData.num_files += total_recv_packet_num;
 				this.performanceData.response_time += total_response_milli_seconds;
 			}
-		}
+		
 	}
-	private void print(Object s, int level){
-		if(this.verbose >= level)
+
+	private void print(Object s, int level) {
+		if (this.verbose >= level)
 			System.out.println("Thread " + this.pid + ": " + s);
 	}
 }

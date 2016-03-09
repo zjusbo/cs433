@@ -36,12 +36,8 @@ public class HTTPPerRequestThreadServer implements HTTPServer {
 
 		@Override
 		public void run() {
-			try {
 				RequestHandler.HandleConnectionSocket(connectionSocket);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 
 	}

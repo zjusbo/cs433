@@ -64,12 +64,8 @@ public class HTTPThreadPoolSharedQueueBusyWaitServer implements HTTPServer {
 			            } // end if
 			        } // end of sync
 		        } // end while
-		        try {
-					RequestHandler.HandleConnectionSocket(s);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
+		        	RequestHandler.HandleConnectionSocket(s);
+				
 		    } // end while(true)
 		}
 	}

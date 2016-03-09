@@ -75,13 +75,10 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 			    } // end if
 			     // end of sync
 		         // end while
-		        try {
+		        
 		        	if(s != null)
 		        		RequestHandler.HandleConnectionSocket(s);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
+				
 		    } // end while(true)
 
 		}

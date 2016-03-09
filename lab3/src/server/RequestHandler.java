@@ -30,7 +30,8 @@ public class RequestHandler {
 		RequestHandler.config = config;
 	}
 
-	public static void HandleConnectionSocket(Socket connectionSocket) throws IOException {
+	public static void HandleConnectionSocket(Socket connectionSocket){
+		try{
 		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 //		length = connectionSocket.getInputStream().read(b_buf);
 //		byte[] b_content = Arrays.copyOfRange(b_buf, 0, length);
@@ -73,8 +74,17 @@ public class RequestHandler {
 		//outToClient.writeBytes(response.toString());
 		outToClient.write(response.getBytes());
 		//outToClient.flush();
-	//	Debug.DEBUG("close socket");
-		connectionSocket.close();
+	//	Debug.DEBUG("close socket")
+		}catch(Exception e){
+			System.err.println(e.getStackTrace());
+		}finally{
+			try {
+				connectionSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static HTTPResponse getResponse(HTTPRequest request) {
@@ -125,6 +135,7 @@ public class RequestHandler {
 				file_content = out.toString().getBytes();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				System.err.println(e.getStackTrace());
 				e.printStackTrace();
 			}
 		} else {
