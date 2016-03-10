@@ -13,7 +13,7 @@ public class HTTPThreadPoolSharedQueueBusyWaitServer implements HTTPServer {
 	private List<Socket> connSockPool;
 	public HTTPThreadPoolSharedQueueBusyWaitServer(ServerConfig config) throws IOException {
 		this.config = config;
-		this.welcomeSocket = new ServerSocket(this.config.port, 10);
+		this.welcomeSocket = new ServerSocket(this.config.port, 50);
 		System.out.println("Server started");
 		System.out.println(this.config);
 		this.threads = new ServiceThread[this.config.threadPoolSize];

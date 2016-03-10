@@ -4,5 +4,5 @@ CacheSize 8096
 
 <VirtualHost *:6789>
   DocumentRoot  ../doc-root/
-  ServerName localhost
+  ServerName python.zoo.cs.yale.edu
 <VirtualHost>  

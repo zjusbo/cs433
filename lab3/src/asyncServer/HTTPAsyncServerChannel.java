@@ -65,7 +65,7 @@ class ConnectionHandler implements
       Attachment newAttach = new Attachment();
       newAttach.server = attach.server;
       newAttach.client = client;
-      newAttach.buffer = ByteBuffer.allocate(2048);
+      newAttach.buffer = ByteBuffer.allocate(4096 * 1024);
       newAttach.isRead = true;
       newAttach.clientAddr = clientAddr;
       client.read(newAttach.buffer, newAttach, rwHandler); 
@@ -87,6 +87,7 @@ class ReadWriteHandler implements CompletionHandler<Integer, Attachment> {
     if (result == -1) {
       try {
         attach.client.close();
+        attach.buffer = null;
         Debug.DEBUG(String.format("Stopped   listening to the   client %s%n",
             attach.clientAddr), 3);
       } catch (IOException ex) {
@@ -115,6 +116,7 @@ class ReadWriteHandler implements CompletionHandler<Integer, Attachment> {
       // Write to the client, completed
       // recycle resources
     	try {
+                        attach.buffer = null;
 			attach.client.close();
 			
 		} catch (IOException e) {

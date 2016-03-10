@@ -30,7 +30,7 @@ public class EchoLineReadWriteHandler implements IReadWriteHandler {
 	
     public EchoLineReadWriteHandler() {
         inBuffer = ByteBuffer.allocate(4096);
-        outBuffer = ByteBuffer.allocate(4096);
+        outBuffer = ByteBuffer.allocate(4096 * 1024);
 
         // initial state
         requestComplete = false;
@@ -53,7 +53,6 @@ public class EchoLineReadWriteHandler implements IReadWriteHandler {
 
         // a connection is ready to be read
         Debug.DEBUG("->handleRead");
-
         if (requestComplete) { // this call should not happen, ignore
             return;
         }
@@ -113,7 +112,10 @@ public class EchoLineReadWriteHandler implements IReadWriteHandler {
         	((SocketChannel)key.channel()).socket().close();
         	key.channel().close();
         	key.cancel();
-        	
+                outBuffer = null;
+                inBuffer = null;
+                request = null; 	
+                
         	channelClosed = true;
         	// may remove multiple times, but it doesn't matter
         	if(this.ITimeoutThread != null)

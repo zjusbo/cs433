@@ -103,16 +103,18 @@ public class RequestSender implements Runnable {
 					total_recv_packet_num++;
 					total_response_milli_seconds += responseTime;
 					socket.close();
-				} catch (Exception e) {
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					System.err.println("Error message");
-					System.err.println(e.getStackTrace());
-					System.err.println(e.getMessage());
+
+					}catch(Exception e){
+						try {
+                            if(socket != null)
+							    socket.close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						System.err.println("Error message");
+						System.err.println(e.getStackTrace());
+						System.err.println(e.getMessage());
 				}
 			}
 		}

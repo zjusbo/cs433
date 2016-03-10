@@ -1,0 +1,169 @@
+1
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 1
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 711.75 files/s
+	Data throughput: 49963.25302734375 kB/s
+	Avg response time: 0.5202435312024353 ms
+2
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 2
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1051.3115355131154 files/s
+	Data throughput: 73745.5589076509 kB/s
+	Avg response time: 0.7195371324403582 ms
+3
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 3
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1255.1159845353952 files/s
+	Data throughput: 87937.5951045069 kB/s
+	Avg response time: 0.8532469429212528 ms
+4
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 4
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1377.1368589423173 files/s
+	Data throughput: 96516.87820476774 kB/s
+	Avg response time: 1.0493388019793595 ms
+5
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 5
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1466.070506735941 files/s
+	Data throughput: 102548.71542782384 kB/s
+	Avg response time: 1.235248015084224 ms
+10
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 10
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1568.7734199350487 files/s
+	Data throughput: 109497.63136631901 kB/s
+	Avg response time: 2.044173381317876 ms
+15
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 15
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1601.0152284263959 files/s
+	Data throughput: 111379.53455911417 kB/s
+	Avg response time: 3.3808434774473217 ms
+20
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 20
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1609.1640165831404 files/s
+	Data throughput: 112002.23269103495 kB/s
+	Avg response time: 4.9698390033937585 ms
+30
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 30
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1639.812319057602 files/s
+	Data throughput: 112831.86684849298 kB/s
+	Avg response time: 8.870500020293031 ms
+40
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 40
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1608.7778662420383 files/s
+	Data throughput: 110069.79217853263 kB/s
+	Avg response time: 14.150582534281885 ms
+50
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 50
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1621.2093487482325 files/s
+	Data throughput: 112681.22797190801 kB/s
+	Avg response time: 19.817112837193076 ms
+60
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 60
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1645.495001826575 files/s
+	Data throughput: 112808.72548912773 kB/s
+	Avg response time: 25.143115192492054 ms
+70
+Client config: 
+	server: python.zoo.cs.yale.edu
+	host: localhost
+	filename: ../requests
+	port: 6789
+	parallel: 70
+	T: 60
+	verbose: 0
+Performance:
+	Transaction throughput: 1629.054423232942 files/s
+	Data throughput: 109260.34687023984 kB/s
+	Avg response time: 31.185130602703527 ms
