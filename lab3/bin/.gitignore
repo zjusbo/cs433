@@ -2,3 +2,14 @@
 /server/
 /utility/
 /client/
+/asyncServer/
+/client_output
+/result_channel
+/result_pool_busy
+/result_pool_suspend
+/result_pool_welcome
+/result_select
+/result_sequential
+/result_thread_per_request
+/server_output
+/single_test

@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import utility.Debug;
 import utility.HTTPRequest;
 import utility.PerformanceData;
 import utility.SocketFactory;
@@ -19,7 +18,6 @@ public class RequestSender implements Runnable {
 	private int verbose = 0;
 	private volatile Thread thisThread;
 	private ArrayList<HTTPRequest> requestList;
-
 	public RequestSender(int pid, SocketFactory clientSocketFactory, ArrayList<HTTPRequest> requestList,
 			PerformanceData pd) {
 		this.pid = pid;

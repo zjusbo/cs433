@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +18,10 @@ public class RequestHandler {
 	static private ServerConfig config;
 	static private HashMap<String, byte[]> cache = new HashMap<String, byte[]>();
 	static private Double cache_curr_size = new Double(0);
-
+	static private final Long threshold = new Long(500); // 500 requests per second
+	static private Long token_num = new Long(0);
+	static private Long last_request_timestamp = new Long(0);
+	
 	/**
 	 * TODO: Understand header - If-Modified-Since - User-Agent Sender Header: -
 	 * Last-Modified Feature: - URL Mapping, / map to index.html or m_index.html
@@ -86,9 +87,32 @@ public class RequestHandler {
 			}
 		}
 	}
-
+	
+	public static boolean isHealthy(){
+		synchronized(token_num){
+			if(token_num == 0){
+				return false;
+			}else{
+				return true;
+			}
+		}
+	}
+	
 	public static HTTPResponse getResponse(HTTPRequest request) {
-
+		synchronized(token_num){
+			long time = System.currentTimeMillis();
+			token_num += time - RequestHandler.last_request_timestamp;
+			RequestHandler.last_request_timestamp = time;
+			token_num -= 1000 / threshold;
+			if(token_num < 0){
+				token_num = 0L;
+			}
+			// unit time is 1000 ms
+			if(token_num > 1000){
+				token_num = 1000L;
+			}
+		}
+		
 		String host = request.getHost();
 		String url = request.getURL();
 		if (!host.equals(config.servername)) {
@@ -114,8 +138,18 @@ public class RequestHandler {
 		String file_path = rootDocument + "/" + url;
 
 		byte[] file_content = null;
-		// if file_path executable?
 		
+		// is the path healthy?
+		if(url.equals("healthy")){
+			if(isHealthy()){
+				return new HTTPResponse(200);
+			}else{
+				return new HTTPResponse(404);
+			}
+			
+		}
+		
+		// if file_path executable?
 		if (file_path.endsWith(".cgi")) {
 			Debug.DEBUG("Start cgi program..", 3);
 			ProcessBuilder pb = new ProcessBuilder("python", file_path);
