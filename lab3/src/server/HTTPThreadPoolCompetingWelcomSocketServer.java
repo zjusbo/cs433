@@ -19,7 +19,7 @@ public class HTTPThreadPoolCompetingWelcomSocketServer implements HTTPServer {
 	@Override
 	public void start() throws IOException {
 		// TODO Auto-generated method stub
-		this.welcomeSocket = new ServerSocket(config.port, 10);
+		this.welcomeSocket = new ServerSocket(config.port, 50);
 		System.out.println("Server started");
 		System.out.println(config);
 		threads = new ServiceThread[config.threadPoolSize];

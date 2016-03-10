@@ -11,7 +11,7 @@ public class HTTPSequenceServer implements HTTPServer {
 
 	@SuppressWarnings("resource")
 	public void start() throws IOException {
-		ServerSocket welcomeSocket = new ServerSocket(config.port, 1);
+		ServerSocket welcomeSocket = new ServerSocket(config.port, 50);
 		System.out.println("Server started");
 		System.out.println(config);
 		while (true) {

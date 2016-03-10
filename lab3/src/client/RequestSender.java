@@ -106,7 +106,8 @@ public class RequestSender implements Runnable {
 					socket.close();
 					}catch(Exception e){
 						try {
-							socket.close();
+                                                        if(socket != null)
+							    socket.close();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();

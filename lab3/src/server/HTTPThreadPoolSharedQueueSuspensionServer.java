@@ -15,7 +15,7 @@ public class HTTPThreadPoolSharedQueueSuspensionServer implements HTTPServer {
 	private List<Socket> connSockPool;
 	public HTTPThreadPoolSharedQueueSuspensionServer(ServerConfig config) throws IOException {
 		this.config = config;
-		this.welcomeSocket = new ServerSocket(this.config.port, 10);
+		this.welcomeSocket = new ServerSocket(this.config.port, 50);
 		System.out.println("Server started");
 		System.out.println(config);
 		this.threads = new ServiceThread[config.threadPoolSize];
