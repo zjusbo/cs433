@@ -62,7 +62,7 @@ public class RequestSender implements Runnable {
 					outToServer.write(req.getBytes());
 					// socket shutdown output
 					// outToServer.flush();
-					// socket.shutdownOutput();
+					socket.shutdownOutput();
 					long startTime = System.currentTimeMillis();
 
 					// recv response
@@ -100,11 +100,12 @@ public class RequestSender implements Runnable {
 					total_recv_byte_num += recv_byte_num;
 					total_recv_packet_num++;
 					total_response_milli_seconds += responseTime;
-					socket.close();
-
+					if(!socket.isClosed()){
+					  socket.close();
+					}
 					}catch(Exception e){
 						try {
-                            if(socket != null)
+                            if(socket != null && !socket.isClosed())
 							    socket.close();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
