@@ -32,9 +32,9 @@ public class HTTPRequest {
 			String method = scanner.next().toUpperCase();
 			String url = scanner.next();
 			String protocol = scanner.next().toUpperCase();
-			if(!method.equals(HTTPRequest.method) || !protocol.equals(HTTPRequest.protocol)){
+			/*if(!method.equals(HTTPRequest.method) || !protocol.equals(HTTPRequest.protocol)){
 				throw new NoSuchElementException("Unknown Method or Protocol.");
-			}
+			}*/
 			if(scanner.hasNext()){
 				host_label = scanner.next().toUpperCase();
 				host = scanner.next();

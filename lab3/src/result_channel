@@ -1,13 +1,5 @@
 1
-Client config: 
-	server: python.zoo.cs.yale.edu
-	host: python.zoo.cs.yale.edu
-	filename: ../requests
-	port: 6789
-	parallel: 1
-	T: 60
-	verbose: 0
-Performance:
+
 	Transaction throughput: 255.98480683692338 files/s
 	Data throughput: 17916.61792557932 kB/s
 	Avg response time: 1.019328387348692 ms
