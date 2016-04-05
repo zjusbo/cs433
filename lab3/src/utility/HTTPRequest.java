@@ -22,6 +22,7 @@ public class HTTPRequest {
 	public HTTPRequest(String url, String host){
 		this.url = url;
 		this.host = host;
+		
 	}
 	
 	// construct header from HTTP plain text

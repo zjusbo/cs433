@@ -1,0 +1,42 @@
+edge 0 1
+edge 1 2
+edge 2 3
+edge 3 4
+edge 4 0
+time + 1000
+1 4 Ping initializing
+time + 120000
+0 dump linkstate
+1 dump linkstate
+2 dump linkstate
+3 dump linkstate
+4 dump linkstate
+0 dump table
+1 dump table
+2 dump table
+3 dump table
+4 dump table
+1 4 Ping before failing 0
+time + 20000
+echo --------- Failing node 0 -----
+fail 0
+time + 120000
+0 dump table
+1 dump table
+2 dump table
+3 dump table
+4 dump table
+1 4 Ping after failing 0
+time + 20000
+echo --------- Restarting node 0 -----
+restart 0
+time + 60000
+0 dump table
+1 dump table
+2 dump table
+3 dump table
+4 dump table
+1 4 Ping after restarting 0
+time + 20000
+exit
+

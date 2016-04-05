@@ -1,0 +1,4 @@
+# edge 0 1 lossRate 0 delay 200 bw 10000 bt 1000 (Bps = ~3561)
+# edge 0 1 lossRate 0.2 delay 0 bw 10000 bt 1000 (Bps = ~360)
+# edge 0 1 lossRate 0.2 delay 200 bw 10000 bt 1000 (Bps = ~270)
+edge 0 1 lossRate 0 delay 200 bw 10000 bt 1000

@@ -61,7 +61,7 @@ public class RequestSender implements Runnable {
 					print(req, 2);
 					outToServer.write(req.getBytes());
 					// socket shutdown output
-					// outToServer.flush();
+					outToServer.flush();
 					socket.shutdownOutput();
 					long startTime = System.currentTimeMillis();
 
@@ -69,31 +69,12 @@ public class RequestSender implements Runnable {
 					// create read stream and receive from server
 					print("Recieving response from: " + socket.getInetAddress(), 1);
 					BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					String sentenceFromServer = inFromServer.readLine();
+					String sentenceFromServer;
 					long responseTime = System.currentTimeMillis() - startTime;
 					// read recv line by line
-					int content_length = 0;
 					// parse header
-					while (sentenceFromServer != null) {
-						recv_byte_num += sentenceFromServer.length();
-						String[] tokens = sentenceFromServer.split("\\s+");
-						if (tokens[0].toLowerCase().equals("content-length:")) {
-							content_length = Integer.valueOf(tokens[1]);
-						}
-						print(sentenceFromServer, 2);
-						if (sentenceFromServer.equals("")) { // "\r\n"
-							break; // header is end
-						}
-						sentenceFromServer = inFromServer.readLine();
-					}
-
-					// parse body, is exist
-					int ch;
-					while (content_length > 0) {
-						// Debug.DEBUG("Content-length = " + content_length);
-						ch = inFromServer.read();
-						recv_byte_num += 1;
-						content_length -= 1;
+					while ((sentenceFromServer = inFromServer.readLine()) != null) {
+						total_recv_byte_num += sentenceFromServer.length() + 2; // \r\n
 					}
 					print("Response time: " + responseTime, 1);
 					print("Recv bytes: " + recv_byte_num, 1);

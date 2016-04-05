@@ -1,0 +1,12 @@
+
+Client main class:
+client.SHTTPTestClient
+
+Server main class:
+server.SHTTPTestServer
+
+Config file:
+config
+
+Request file:
+request
