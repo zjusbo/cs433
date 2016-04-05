@@ -1,0 +1,12 @@
+1.8:
+
+(Steve):  fixed bug in EmulatedNodeServer.java --  Packet.MAX_PACKET_SIZE
+          should be EmulatorPacket.MAX_PACKET_SIZE
+
+1.7:
+
+(Steve):  fixed bug in Node.onReceive() spotted by Benjamin Hindman.  Bug would call a method on an object reference before verifying the reference was non-null.
+
+(Safeer):  modified lib/Manager.java and lib/Packet.java so that
+           if a node attempts to send a packet with TTL 0, the
+           manager raises an exception
