@@ -297,6 +297,7 @@ public class Node {
 											sock.connect(destAddr, port);
 											TransferClient client = new
 													TransferClient(manager, this, sock, amount, interval, sz);
+											Debug.println(manager + sock.toString() + amount + interval + sz + client);
 											client.start();
 
 											return true;
