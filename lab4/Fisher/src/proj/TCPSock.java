@@ -87,8 +87,8 @@ public class TCPSock {
     public int bind(int localPort) {
     	// sock is initialized and localPort is not occupied.
     	if(this.state == State.INIT && this.tcpMan.getSock(this.localAddr, localPort) == null){
-        	Debug.println(String.format("%s: Binded to port %d", this.toString(), this.localPort));
     		this.localPort = localPort;
+    		Debug.println(String.format("%s: Binded to port %d", this.toString(), this.localPort));
     		return 0;
     	}
     	return -1;
@@ -156,13 +156,14 @@ public class TCPSock {
      * @return int 0 on success, -1 otherwise
      */
     public int connect(int destAddr, int destPort) {
-    	Debug.println(String.format("Socket (%d:%d) connecting to (%d:%d)", this.localAddr, this.localPort, this.remoteAddr, this.remotePort));
     	if(this.state == State.INIT && this.localPort != -1){
     		this.remoteAddr = destAddr;
     		this.remotePort = destPort;
+     
     		this.state = State.SYN_SENT;
     		Random rand = new Random();
     		this.send_seq_num = rand.nextInt(1024);
+    		Debug.println(String.format("Socket (%d:%d) connecting to (%d:%d)", this.localAddr, this.localPort, this.remoteAddr, this.remotePort));
     		sendSYN();
     		return 0;
     	}
@@ -170,9 +171,9 @@ public class TCPSock {
     }
 
     private void sendSYN() {
-    	Debug.println("In function sendSYN");
     	if(this.state == State.SYN_SENT){
     		Transport segment = new Transport(this.localPort, this.remotePort, Transport.SYN, 1, this.send_seq_num, null);
+    		Debug.println(String.format("%s, sending syn", this.toString()));
     		this.tcpMan.send(this, segment);
     		try{
     			Method method = Callback.getMethod("sendSYN", this, null);
@@ -184,7 +185,6 @@ public class TCPSock {
     	}else{
     		Debug.print("trying to send SYN in a wrong socket state\n");
     	}
-    	
 	}
 
 	/**

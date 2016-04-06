@@ -84,17 +84,19 @@ public class TCPManager {
      * send segment using second layer interface 
      **/
     public void send(TCPSock sock, Transport segment){
+    	Debug.println(this.toString() + "sending packet");
     	this.node.sendSegment(sock.getLocalAddr(), sock.getRemoteAddr(), Protocol.TRANSPORT_PKT, segment.pack());
     }
     
     /**
      * Called by node when a TCP packet arrives
-     * demultiplex: decide wich sock should handle this packet based on its 4 tuples
+     * demultiplex: decide which sock should handle this packet based on its 4 tuples
      *  
      **/
 	public void onReceive(int srcAddr, int destAddr, Transport segment) {
 		int destPort = segment.getDestPort();
 		int srcPort = segment.getSrcPort();
+		Debug.println(this.toString() + " recevied a packet");
 		// match connection sock
 		TCPSock sock = getSock(srcAddr, srcPort, destAddr, destPort);
 		// connection sock not found or connection sock is closed
@@ -137,5 +139,10 @@ public class TCPManager {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString(){
+		return "TCPManager" + this;
 	}
 }
