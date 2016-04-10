@@ -80,13 +80,14 @@ public class TransferClient extends FishThread {
             if (index == 0) {
                 // generate new data
                 for (int i = 0; i < buf.length; i++) {
+                	//buf[i] = String.valueOf(i % 10).getBytes()[0];
                     buf[i] = (byte) i;
                 }
             }
 
             int len = Math.min(buf.length - index, amount);
             int count = sock.write(buf, index, len);
-
+            System.err.println("Bytes written: " + count);
             if (count == -1) {
                 // on error, release the socket immediately
                 node.logError("time = " + manager.now() + " msec");

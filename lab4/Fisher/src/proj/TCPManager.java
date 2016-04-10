@@ -59,6 +59,7 @@ public class TCPManager {
     public TCPSock socket() {
     	for(TCPSock sock : TCPSocks){
     		if(sock.getState() == State.CLOSED){
+    			sock.setState(State.INIT);
     			sock.init();
     			return sock;
     		}
@@ -84,8 +85,10 @@ public class TCPManager {
      * send segment using second layer interface 
      **/
     public void send(TCPSock sock, Transport segment){
-    	Debug.println(this.toString() + "sending packet");
-    	this.node.sendSegment(sock.getLocalAddr(), sock.getRemoteAddr(), Protocol.TRANSPORT_PKT, segment.pack());
+    	this.send(sock.getLocalAddr(), sock.getRemoteAddr(), segment);
+    }
+    public void send(int localAddr, int remoteAddr, Transport segment){
+    	this.node.sendSegment(localAddr, remoteAddr, Protocol.TRANSPORT_PKT, segment.pack());  	
     }
     
     /**
@@ -96,8 +99,7 @@ public class TCPManager {
 	public void onReceive(int srcAddr, int destAddr, Transport segment) {
 		int destPort = segment.getDestPort();
 		int srcPort = segment.getSrcPort();
-		Debug.println(this.toString() + " recevied a packet");
-		// match connection sock
+		// matnnection sock
 		TCPSock sock = getSock(srcAddr, srcPort, destAddr, destPort);
 		// connection sock not found or connection sock is closed
 		if(sock == null || sock.isClosed()){
@@ -143,6 +145,6 @@ public class TCPManager {
 	
 	@Override
 	public String toString(){
-		return "TCPManager" + this;
+		return "TCPManager";
 	}
 }

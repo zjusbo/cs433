@@ -88,7 +88,7 @@ public class TransferServer extends FishThread {
         private long interval;
         private byte[] buf;
         private int pos;
-
+        private int idle_timeout_cnt = 0;
         public TransferWorker(Manager manager, Node node, TCPSock sock,
                               long interval, int sz) {
             super(manager, node);
@@ -120,6 +120,7 @@ public class TransferServer extends FishThread {
                 }
 
                 if (count > 0) {
+                	idle_timeout_cnt = 0;
                     //node.logOutput("verifying data...");
                     for (int i = index; i < index + count; i++) {
                         if (buf[i] != (byte) i) {
@@ -138,7 +139,12 @@ public class TransferServer extends FishThread {
                 pos += count;
 
                 //node.logOutput("time = " + manager.now() + " msec");
-                //node.logOutput("bytes received = " + count);
+                if(count == 0){
+                	idle_timeout_cnt++;
+                }
+                if(idle_timeout_cnt == 4){
+                	sock.close();
+                }
                 return;
             }
 

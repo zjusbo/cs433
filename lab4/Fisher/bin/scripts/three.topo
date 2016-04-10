@@ -1,3 +1,4 @@
-edge 0 1
-edge 1 2
-edge 0 2
+//edge 0 1 lossRate 0 delay 5 bw 10 bt 1000
+//edge 1 2 lossRate 0.05 delay 5 bw 10 
+//edge 0 2 lossRate 0.05 delay 5 bw 10 
+edge 0 1 lossRate 0.2 delay 0 bw 10000 bt 1000

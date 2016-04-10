@@ -1,7 +1,7 @@
 package proj;
 
 public class Debug {
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	public static void print(String s){
 		if(DEBUG){
 			System.out.print(s);

@@ -78,7 +78,6 @@ public class Node {
 		if (this.matchTransferCommand(command)) {
 			return;
 		}
-
 		if (this.matchServerCommand(command)) {
 			return;
 		}
@@ -117,7 +116,7 @@ public class Node {
 	 */
 	public void onReceive(Integer from, byte[] msg) {
 		Packet packet = Packet.unpack(msg);
-		logOutput("received packet from " + from);
+		//logOutput("received packet from " + from);
 		if(packet == null) {
 			logError("Unable to unpack message: " + Utility.byteArrayToString(msg) + " Received from " + from);
 			return;
@@ -168,10 +167,11 @@ public class Node {
 
 	// receive transport packet, send it to tcpman
 	private void receiveTransport(Packet packet){
-		logOutput("Received TCP packet from " + packet.getSrc() + " with message: " + Utility.byteArrayToString(packet.getPayload()));
 		int destAddr = packet.getDest();
 		int srcAddr = packet.getSrc();
 		Transport segment = Transport.unpack(packet.getPayload());
+		//logOutput("Received TCP packet from " + packet.getSrc() + " with message: " + Utility.byteArrayToString(segment.getPayload()));
+		
 		this.tcpMan.onReceive(srcAddr, destAddr, segment);
 	}
 	private void receivePing(Packet packet) {
@@ -297,7 +297,7 @@ public class Node {
 											sock.connect(destAddr, port);
 											TransferClient client = new
 													TransferClient(manager, this, sock, amount, interval, sz);
-											Debug.println(manager + sock.toString() + amount + interval + sz + client);
+											
 											client.start();
 
 											return true;
