@@ -22,6 +22,9 @@ public class RingBuffer {
 	public synchronized byte[] get(int start, int len){
 		// avaliable data length
 		len = Math.min(len, front - rear - start);
+		
+		if(len <= 0) return new byte[0];
+		
 		byte[] re = new byte[len];
 		int start_idx = (start + rear) % capacity;
 		
@@ -41,8 +44,12 @@ public class RingBuffer {
 	public synchronized int size(){
 		return front - rear;
 	}
-	
+	/**
+	 * advance the window by offset
+	 * pop elements out
+	 **/
 	public synchronized void advance(int offset){
+		if(offset <= 0) return ;
 		rear += offset;
 		if(rear > front){
 			rear = front;
@@ -53,7 +60,7 @@ public class RingBuffer {
 	 * thread safe
 	 **/
 	public synchronized int put(byte[] elements){
-		int len = Math.min(elements.length, capacity - (front - rear));
+		int len = Math.min(elements.length, remaining());
 		int start_idx = front % capacity;
 		// no wrap up
 		if(start_idx + len <= capacity){
@@ -66,7 +73,10 @@ public class RingBuffer {
 		return len;
 	}
 	
+	/**
+	 * remaining space in buffer, in bytes
+	 */
 	public synchronized int remaining(){
-		return capacity - (front - rear);
+		return capacity - size();
 	}
 }

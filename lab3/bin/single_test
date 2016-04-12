@@ -1,0 +1,2 @@
+java client.SHTTPTestClient -files ../requests -parallel 60 -T 60 -port 6789 -server frog.zoo.cs.yale.edu -servname frog.zoo.cs.yale.edu -verbose 3
+java client.SHTTPTestClient -files ../requests -parallel 50 -T 60 -port 6789 -server frog.zoo.cs.yale.edu -servname frog.zoo.cs.yale.edu -verbose 3

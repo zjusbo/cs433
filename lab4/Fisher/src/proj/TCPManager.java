@@ -143,6 +143,10 @@ public class TCPManager {
 		return null;
 	}
 	
+	public long now(){
+		return this.manager.now();
+	}
+	
 	@Override
 	public String toString(){
 		return "TCPManager";

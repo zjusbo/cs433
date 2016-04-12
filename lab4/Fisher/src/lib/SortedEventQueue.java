@@ -1,7 +1,6 @@
 package lib;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.lang.IndexOutOfBoundsException;
 
 /**
  * <pre>   
